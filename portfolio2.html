@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio AI- 사진, 동영상 게시판 Portfolio Showcase</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Pretendard', -apple-system, system-ui, sans-serif;
+            background-color: #000000; color: #ffffff; line-height: 1.6; padding-top: 120px;
+        }
+        header {
+            position: fixed; top: 0; left: 0; width: 100%;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 25px 50px; background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px); z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .logo { font-size: 24px; font-weight: 800; color: #ffffff; text-decoration: none; }
+        .logo span { color: #00e676; }
+        .nav-links { display: flex; gap: 20px; align-items: center; }
+        .back-btn { color: #aaaaaa; text-decoration: none; font-size: 15px; transition: color 0.3s; }
+        .back-btn:hover, .community-link:hover { color: #00e676; }
+        .community-link { color: #ffffff; text-decoration: none; font-size: 15px; font-weight: 600; background: #121214; padding: 8px 16px; border-radius: 20px; border: 1px solid #222225; transition: all 0.3s; }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        .board-header { margin-bottom: 40px; text-align: center; }
+        .board-header h1 { font-size: 2.8rem; font-weight: 700; margin-bottom: 10px; color: #00e676; }
+        .board-header p { color: #666666; font-size: 16px; }
+
+        .write-box {
+            background-color: #0a0a0c; border: 1px solid #1a1a1c; padding: 30px; border-radius: 16px; margin-bottom: 50px;
+        }
+        .input-row { display: flex; gap: 15px; margin-bottom: 20px; }
+        .input-row .form-group { flex: 1; margin-bottom: 0; }
+
+        .form-group input, .write-box textarea {
+            width: 100%; background-color: #121214; border: 1px solid #222225;
+            padding: 16px; border-radius: 10px; color: #ffffff; font-size: 15px; outline: none; transition: all 0.3s;
+        }
+        .form-group input:focus, .write-box textarea:focus { border-color: #00e676; box-shadow: 0 0 10px rgba(0, 230, 118, 0.1); }
+        .write-box textarea { height: 100px; resize: none; width: 100%; }
+        
+        .submit-row { text-align: right; margin-top: 20px; }
+        .submit-btn {
+            background-color: #00e676; color: #000000; border: none;
+            padding: 14px 40px; border-radius: 30px; font-weight: 600; font-size: 15px; cursor: pointer; transition: all 0.2s;
+        }
+        .submit-btn:hover { transform: translateY(-2px); background-color: #ffffff; }
+
+        /* 📸 피드 및 미디어 스타일 */
+        .feed-list { display: flex; flex-direction: column; gap: 35px; }
+        .feed-item { background-color: #0a0a0c; border: 1px solid #1a1a1c; padding: 30px; border-radius: 20px; }
+        .feed-meta { display: flex; justify-content: space-between; margin-bottom: 15px; color: #444444; font-size: 14px; }
+        .feed-author { color: #ffffff; font-weight: 700; font-size: 16px; }
+        .feed-content { color: #aaaaaa; font-size: 15px; white-space: pre-line; line-height: 1.6; margin-bottom: 20px; }
+        
+        .feed-image-wrapper { width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid #1a1a1c; background-color: #050507; margin-bottom: 15px; }
+        .feed-image { width: 100%; height: auto; display: block; max-height: 600px; object-fit: contain; }
+
+        /* 🎬 유튜브 반응형 비디오 스타일 */
+        .feed-video-wrapper { 
+            position: relative; width: 100%; padding-bottom: 56.25%; /* 16:9 비율 */
+            height: 0; border-radius: 12px; overflow: hidden; 
+            border: 1px solid #1a1a1c; background-color: #050507; margin-bottom: 15px;
+        }
+        .feed-video-wrapper iframe { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; 
+        }
+
+        .delete-btn { background: none; border: none; color: #444444; cursor: pointer; font-size: 13px; margin-left: 15px; }
+        .delete-btn:hover { color: #ff5252; }
+        .no-data { text-align: center; color: #444444; padding: 60px 0; }
+
+        @media screen and (max-width: 768px) {
+            body { padding-top: 90px; } header { padding: 15px 20px; }
+            .board-header h1 { font-size: 2rem; }
+            .input-row { flex-direction: column; gap: 15px; }
+            .write-box, .feed-item { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo">Studio AI<span>.</span></a>
+        <div class="nav-links">
+            <a href="index.html" class="back-btn">◀ 메인으로</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="board-header">
+            <h1>PORTFOLIO SHOWCASE</h1>
+            <p>디자인 작업물, 카드뉴스 및 유튜브 영상을 아카이빙하는 보드입니다.</p>
+        </div>
+
+        <div class="write-box">
+            <div class="input-row">
+                <div class="form-group">
+                    <input type="text" id="author-input" placeholder="작성자명" maxlength="10">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password-input" placeholder="비밀번호" maxlength="12">
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <input type="text" id="image-url-input" placeholder="이미지 주소(URL)를 입력하세요 (선택)">
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <input type="text" id="youtube-url-input" placeholder="유튜브 영상 주소(URL)를 입력하세요 (선택)">
+            </div>
+            <div class="form-group">
+                <textarea id="content-input" placeholder="작품에 대한 설명이나 기획 의도를 기록해 주세요..." maxlength="300"></textarea>
+            </div>
+            <div class="submit-row">
+                <button class="submit-btn" onclick="addPortfolio()">UPLOAD WORK</button>
+            </div>
+        </div>
+
+        <div id="feed-container" class="feed-list"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCq19TCAGIDWDRFg5uqfFafJ6aMFC1AM8g",
+            authDomain: "wemento-board.firebaseapp.com",
+            projectId: "wemento-board",
+            storageBucket: "wemento-board.firebasestorage.app",
+            messagingSenderId: "995727815375",
+            appId: "1:995727815375:web:c07d2adc92cdb22bbf3dba"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        const collectionName = "posts_portfolio2"; 
+        const feedContainer = document.getElementById('feed-container');
+
+        // 유튜브 URL에서 Embed 가능한 비디오 ID 추출 함수
+        function getYoutubeEmbedUrl(url) {
+            if (!url) return null;
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            if (match && match[2].length === 11) {
+                return `https://www.youtube.com/embed/${match[2]}`;
+            }
+            return null;
+        }
+
+        function startListening() {
+            const postsCollection = collection(db, collectionName);
+            const q = query(postsCollection, orderBy("timestamp", "asc"));
+            
+            onSnapshot(q, (snapshot) => {
+                feedContainer.innerHTML = '';
+                if (snapshot.empty) {
+                    feedContainer.innerHTML = `<div class="no-data">등록된 포트폴리오가 없습니다.</div>`;
+                    return;
+                }
+                const docsArray = [];
+                snapshot.forEach(doc => docsArray.push({ id: doc.id, ...doc.data() }));
+                docsArray.reverse().forEach((post) => {
+                    const item = document.createElement('div');
+                    item.className = 'feed-item';
+                    
+                    // 이미지 HTML 구성
+                    const imageHtml = post.imageUrl ? `<div class="feed-image-wrapper"><img src="${escapeHtml(post.imageUrl)}" class="feed-image" alt="work"></div>` : '';
+                    
+                    // 유튜브 HTML 구성
+                    const embedUrl = getYoutubeEmbedUrl(post.youtubeUrl);
+                    const videoHtml = embedUrl ? `<div class="feed-video-wrapper"><iframe src="${embedUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>` : '';
+
+                    item.innerHTML = `
+                        <div class="feed-meta">
+                            <span class="feed-author">${escapeHtml(post.author)}</span>
+                            <div>
+                                <span>${post.date}</span>
+                                <button class="delete-btn" data-id="${post.id}">삭제</button>
+                            </div>
+                        </div>
+                        <div class="feed-content">${escapeHtml(post.content)}</div>
+                        ${videoHtml}
+                        ${imageHtml}
+                    `;
+                    feedContainer.appendChild(item);
+                });
+
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => deletePost(e.target.getAttribute('data-id')));
+                });
+            });
+        }
+
+        window.addPortfolio = async function() {
+            const authorInput = document.getElementById('author-input');
+            const passwordInput = document.getElementById('password-input');
+            const contentInput = document.getElementById('content-input');
+            const imageUrlInput = document.getElementById('image-url-input');
+            const youtubeUrlInput = document.getElementById('youtube-url-input');
+            
+            const author = authorInput.value.trim();
+            const password = passwordInput.value.trim();
+            const content = contentInput.value.trim();
+            const imageUrl = imageUrlInput.value.trim();
+            const youtubeUrl = youtubeUrlInput.value.trim();
+
+            // 작성자, 패스워드, 내용 필수 & 이미지나 유튜브 중 하나는 무조건 입력 검증
+            if (!author || !password || !content) {
+                alert('작성자, 비밀번호, 내용을 입력해 주세요.'); return;
+            }
+            if (!imageUrl && !youtubeUrl) {
+                alert('이미지 주소 또는 유튜브 주소 중 최소 하나는 입력해야 합니다.'); return;
+            }
+
+            const now = new Date();
+            const dateString = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            try {
+                await addDoc(collection(db, collectionName), {
+                    author: author, password: password, content: content, 
+                    imageUrl: imageUrl || "", youtubeUrl: youtubeUrl || "",
+                    date: dateString, timestamp: Date.now()
+                });
+                authorInput.value = ''; passwordInput.value = ''; contentInput.value = ''; 
+                imageUrlInput.value = ''; youtubeUrlInput.value = '';
+            } catch (error) { alert("업로드 실패"); }
+        }
+
+        async function deletePost(id) {
+            const inputPassword = prompt('삭제 비밀번호를 입력하세요:');
+            if (!inputPassword) return;
+
+            try {
+                const docRef = doc(db, collectionName, id);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const originalPassword = docSnap.data().password;
+                    const adminSnap = await getDoc(doc(db, "system_config", "admin_credential"));
+                    const masterPassword = adminSnap.exists() ? adminSnap.data().masterPassword : null;
+
+                    if (inputPassword === originalPassword || (masterPassword && inputPassword === masterPassword)) {
+                        await deleteDoc(docRef);
+                        alert('삭제 완료되었습니다.');
+                    } else { alert('비밀번호 불일치'); }
+                }
+            } catch (error) { alert("삭제 실패"); }
+        }
+
+        function escapeHtml(str) {
+            if(!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        startListening();
+    </script>
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio AI - 모임 관리자 센터</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Pretendard', -apple-system, system-ui, sans-serif;
+            background-color: #050507; color: #ffffff; padding: 40px 20px;
+            letter-spacing: -0.5px;
+        }
+        
+        /* 🔒 게이트웨이 디자인 */
+        .gate-container {
+            max-width: 450px; margin: 120px auto; text-align: center;
+            background-color: #0a0a0c; border: 1px solid #1a1a1c; padding: 50px 40px; border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+        .gate-container h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; color: #00e676; letter-spacing: 1px; }
+        .gate-container p { color: #555558; font-size: 13px; margin-bottom: 30px; }
+        .gate-container input {
+            width: 100%; background-color: #121214; border: 1px solid #222225;
+            padding: 16px; border-radius: 12px; color: #ffffff; text-align: center; font-size: 16px; margin-bottom: 20px; outline: none;
+            transition: border-color 0.3s;
+        }
+        .gate-container input:focus { border-color: #00e676; }
+        .gate-container button {
+            background-color: #00e676; color: #000000; border: none; width: 100%;
+            padding: 16px; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; transition: all 0.3s;
+        }
+        .gate-container button:hover { background-color: #ffffff; transform: translateY(-2px); }
+
+        /* 📊 메인 대시보드 레이아웃 */
+        .admin-box { max-width: 1200px; margin: 0 auto; display: none; }
+        
+        .admin-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; border-bottom: 1px solid #1a1a1c; padding-bottom: 25px; }
+        .admin-header h1 { font-size: 26px; font-weight: 800; color: #ffffff; }
+        .admin-header p { color: #666666; font-size: 14px; margin-top: 5px; }
+        
+        .server-status { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #88888c; background: #0a0a0c; padding: 8px 16px; border-radius: 20px; border: 1px solid #1a1a1c; }
+        .status-dot { width: 8px; height: 8px; background-color: #00e676; border-radius: 50%; box-shadow: 0 0 8px #00e676; animation: blink 2s infinite; }
+
+        /* 상단 통계 스코어보드 */
+        .core-analytics {
+            background: linear-gradient(135deg, #0a0a0c 0%, #111115 100%);
+            border: 1px solid #1a1a1c; padding: 35px; border-radius: 20px; margin-bottom: 30px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .core-info h3 { font-size: 14px; color: #666666; font-weight: 500; text-transform: uppercase; margin-bottom: 5px; }
+        .core-info .total-num { font-size: 48px; font-weight: 900; color: #00e676; line-height: 1; }
+
+        /* 📋 신청자 리스트 테이블 스타일 추가 */
+        .data-section {
+            background-color: #0a0a0c; border: 1px solid #1a1a1c; border-radius: 16px; padding: 25px; margin-bottom: 30px;
+            overflow-x: auto;
+        }
+        .section-title { font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 20px; display: flex; justify-content: space-between; }
+        
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; min-width: 900px; }
+        th { background-color: #121214; color: #00e676; font-weight: 600; padding: 14px 10px; border-bottom: 2px solid #1a1a1c; }
+        td { padding: 14px 10px; border-bottom: 1px solid #121214; color: #cccccc; vertical-align: top; line-height: 1.5; }
+        tr:hover td { background-color: #111113; color: #ffffff; }
+        
+        .badge { background: #16161a; color: #88888c; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .delete-btn { background: #221212; color: #ff5555; border: 1px solid #442222; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .delete-btn:hover { background: #441111; color: #ffffff; }
+
+        /* 하단 로그 시스템 콘솔 */
+        .bottom-section { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .log-console { background-color: #020203; border: 1px solid #1a1a1c; border-radius: 16px; padding: 25px; font-family: 'Courier New', Courier, monospace; }
+        .log-title { font-size: 14px; color: #88888c; margin-bottom: 15px; font-weight: bold; display: flex; justify-content: space-between; }
+        .log-box { height: 140px; overflow-y: auto; font-size: 12px; color: #00e676; line-height: 1.8; opacity: 0.8; }
+        
+        .sys-info-box { background-color: #0a0a0c; border: 1px solid #1a1a1c; border-radius: 16px; padding: 25px; }
+        .sys-info-title { font-size: 14px; color: #ffffff; margin-bottom: 15px; font-weight: 700; }
+        .sys-row { display: flex; justify-content: space-between; font-size: 13px; color: #666666; padding: 8px 0; border-bottom: 1px solid #121214; }
+        .sys-row span:last-child { color: #dddddd; font-weight: 600; }
+
+        @keyframes blink { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div id="admin-gate" class="gate-container">
+        <h2>Studio AI CORE</h2>
+        <p>SECURE SYSTEM MANAGEMENT GATEWAY</p>
+        <input type="password" id="admin-gate-pass" placeholder="ENTER MASTER PASSWORD">
+        <button onclick="checkGateKey()">DECRYPT & ACCESS</button>
+    </div>
+
+    <div id="admin-main" class="admin-box">
+        <div class="admin-header">
+            <div>
+                <h1>Studio AI CONTROL CENTER</h1>
+                <p>Cloud Firestore Infrastructure Real-time Data Analytics</p>
+            </div>
+            <div class="server-status">
+                <div class="status-dot"></div>
+                <span>DATABASE LIVE CONNECTED</span>
+            </div>
+        </div>
+
+        <div class="core-analytics">
+            <div class="core-info">
+                <h3>Total Recieved Applications</h3>
+                <div id="count-total" class="total-num">00</div>
+            </div>
+            <div style="text-align: right; color: #444446; font-size: 12px; font-family: monospace;">
+                SECURE SSL LAYER V3<br>
+                REFRESH STATUS: REAL-TIME LIST
+            </div>
+        </div>
+
+        <div class="data-section">
+            <div class="section-title">
+                <span>📋 스터디 신청 서류 명단</span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 90px;">이름</th>
+                        <th style="width: 130px;">연락처</th>
+                        <th style="width: 60px;">나이</th>
+                        <th style="width: 100px;">직업/전공</th>
+                        <th>시간대</th>
+                        <th style="width: 100px;">경험/관심</th>
+                        <th>참여 목적 / 자기소개</th>
+                        <th style="width: 120px;">신청 일시</th>
+                        <th style="width: 60px;">관리</th>
+                    </tr>
+                </thead>
+                <tbody id="applicant-list">
+                    <tr>
+                        <td colspan="9" style="text-align: center; color: #555;">데이터 로딩 대기 중...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="bottom-section">
+            <div class="log-console">
+                <div class="log-title">
+                    <span>⚙️ LIVE CONSOLE SYSTEM LOG</span>
+                    <span style="color: #444446; font-size: 11px;">STABLE</span>
+                </div>
+                <div id="log-box" class="log-box">
+                    [SYSTEM] Initializing secure gate security kernel...<br>
+                    [SECURITY] Standby for administrative master token authentication...<br>
+                </div>
+            </div>
+
+            <div class="sys-info-box">
+                <div class="sys-info-title">INFRASTRUCTURE</div>
+                <div class="sys-row"><span>Engine</span><span>Firestore DB</span></div>
+                <div class="sys-row"><span>Target Collection</span><span>posts</span></div>
+                <div class="sys-row"><span>SDK Version</span><span>Firebase v10.8.0</span></div>
+                <div class="sys-row"><span>Status</span><span style="color:#00e676;">OPERATIONAL</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, doc, getDoc, getDocs, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCq19TCAGIDWDRFg5uqfFafJ6aMFC1AM8g",
+            authDomain: "wemento-board.firebaseapp.com",
+            projectId: "wemento-board",
+            storageBucket: "wemento-board.firebasestorage.app",
+            messagingSenderId: "995727815375",
+            appId: "1:995727815375:web:c07d2adc92cdb22bbf3dba"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 게이트웨이 인증 체크
+        window.checkGateKey = async function() {
+            const passInput = document.getElementById('admin-gate-pass').value.trim();
+            if(!passInput) return;
+
+            try {
+                const adminSnap = await getDoc(doc(db, "system_config", "admin_credential"));
+                if (adminSnap.exists() && passInput === adminSnap.data().masterPassword) {
+                    document.getElementById('admin-gate').style.display = 'none';
+                    document.getElementById('admin-main').style.display = 'block';
+                    
+                    writeLog("[SUCCESS] Master password verified successfully.");
+                    writeLog("[SYSTEM] Fetching cluster database records from 'posts'...");
+                    loadApplicants();
+                } else {
+                    alert('ACCESS DENIED: Invalid Administrative Credentials.');
+                    writeLog("[WARNING] Failed access attempt detected with invalid token.");
+                }
+            } catch (e) {
+                alert('CRITICAL SERVER ERROR');
+            }
+        }
+
+        // 콘솔 로그 출력 펑션
+        function writeLog(text) {
+            const logBox = document.getElementById('log-box');
+            const now = new Date();
+            const timeStr = `[${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}]`;
+            logBox.innerHTML += `${timeStr} ${text}<br>`;
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        // 신청서 실시간 취합 및 출력 로직
+        async function loadApplicants() {
+            const tbody = document.getElementById('applicant-list');
+            try {
+                // 타임스탬프 역순(최신순) 정렬 쿼리
+                const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                tbody.innerHTML = "";
+                let count = 0;
+
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    // 게시판용 기존 글(content 필드 보유) 우회 처리 및 신청서 검증
+                    if (!data.contact && data.content) return; 
+
+                    count++;
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="font-weight:700; color:#fff;">${data.author || '미기재'}</td>
+                        <td><a href="tel:${data.contact}" style="color:#00e676; text-decoration:none;">${data.contact || '미기재'}</a></td>
+                        <td>${data.age || '-'}</td>
+                        <td>${data.job || '-'}</td>
+                        <td style="font-size:12px; color:#aaa;">${(data.availableTime || '').replace(/\n/g, '<br>')}</td>
+                        <td>
+                            <span class="badge" style="color:#00e676; border:1px solid #134420;">${data.expLevel || '-'}</span><br>
+                            <span class="badge" style="margin-top:4px; display:inline-block;">${data.interests || '-'}</span>
+                        </td>
+                        <td style="font-size:13px;">
+                            <strong style="color:#fff;">[목적]</strong> ${data.purpose || '-'}<br>
+                            <strong style="color:#fff; display:inline-block; margin-top:5px;">[소개]</strong> ${data.intro || '-'}
+                        </td>
+                        <td style="font-size:12px; color:#666;">${data.date || '-'}</td>
+                        <td><button class="delete-btn" onclick="deleteApplicant('${docSnap.id}', '${data.author}')">삭제</button></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                document.getElementById('count-total').innerText = String(count).padStart(2, '0');
+                writeLog(`[INFO] Synchronized ${count} cluster application profiles total.`);
+                writeLog(`[COMPLETE] Data pipeline plotting finished stably.`);
+
+                if(count === 0) {
+                    tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #555558; padding: 40px 0;">현재 접수된 스터디 신청서가 없습니다.</td></tr>`;
+                }
+
+            } catch (e) {
+                console.error(e);
+                writeLog("[ERROR] Failed to fetch cloud DB records. Pipeline Interrupted.");
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #ff5555;">데이터 정렬 인덱스를 생성 중이거나 로드에 실패했습니다.</td></tr>`;
+            }
+        }
+
+        // 명단 삭제 기능 글로벌 바인딩
+        window.deleteApplicant = async function(id, name) {
+            if(!confirm(`⚠️ 정말로 [ ${name} ] 님의 신청서 데이터를 영구 파기하시겠습니까?`)) return;
+            try {
+                await deleteDoc(doc(db, "posts", id));
+                writeLog(`[DELETE] Object ID (${id}) assigned to ${name} purged.`);
+                loadApplicants(); // 리스트 갱신
+            } catch(e) {
+                alert("삭제 권한이 없거나 오류가 발생했습니다.");
+            }
+        }
+    </script>
+</body>
+</html>
