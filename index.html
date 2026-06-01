@@ -319,7 +319,8 @@
         <nav>
             <a href="portfolio2.html" class="img-nav-btn hover-target" title="포트폴리오 2 바로가기"></a>
             
-            <a href="apply.html" class="hover-target">Apply</a>
+            <a href="#challenge" class="hover-target">Story</a>
+            <a href="#about" class="hover-target">Roadmap</a>
             <a href="#portfolio" class="hover-target">Guide</a>
             <a href="board.html" class="hover-target">Community</a> 
         </nav>
@@ -457,8 +458,8 @@
         const dots = document.querySelectorAll('.indicator-dot');
         const sections = [
             document.querySelector('.hero'), 
+            document.getElementById('challenge'), // 순서 매칭 조정: 두 번째 섹션
             document.getElementById('about'), 
-            document.getElementById('challenge'), 
             document.getElementById('portfolio'), 
             document.getElementById('board-link')
         ];
