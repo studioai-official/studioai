@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio AI - 에니어그램 성향 검사</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <style>
+        :root { --bg-color: #000000; --card-bg: #0a0a0c; --text-color: #ffffff; --accent: #00e676; }
+        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .test-container { width: 90%; max-width: 600px; background: var(--card-bg); padding: 40px; border-radius: 20px; border: 1px solid #1a1a1c; text-align: center; }
+        .progress-bar { width: 100%; height: 6px; background: #1a1a1c; border-radius: 3px; margin-bottom: 40px; }
+        #progress { height: 100%; width: 0%; background: var(--accent); transition: width 0.4s ease; }
+        .question-text { font-size: 20px; font-weight: 500; margin-bottom: 30px; line-height: 1.6; }
+        .options { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .opt-btn { padding: 15px 0; border: 1px solid #222225; background: #121214; color: #ffffff; border-radius: 8px; cursor: pointer; transition: all 0.3s; }
+        .opt-btn:hover { border-color: var(--accent); background: #1a1a1c; color: #00e676; }
+        .result-desc { text-align: left; margin-top: 20px; padding: 20px; background: #161619; border-left: 4px solid var(--accent); border-radius: 4px; font-size: 14px; line-height: 1.6; margin-bottom: 15px; }
+        .group-desc { margin: 20px 0; padding: 20px; background: #222; border-radius: 10px; text-align: left; line-height: 1.6; }
+        .char-icon { font-size: 30px; margin-right: 10px; }
+        .restart-btn { padding: 15px 30px; border: 1px solid var(--accent); background: var(--accent); color: #000; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 25px; }
+    </style>
+</head>
+<body>
+
+<div class="test-container" id="app">
+    <div class="progress-bar"><div id="progress"></div></div>
+    <div id="question-box">
+        <div class="question-text" id="question">질문을 불러오는 중...</div>
+        <div class="options">
+            <button class="opt-btn" onclick="selectScore(1)">1</button>
+            <button class="opt-btn" onclick="selectScore(2)">2</button>
+            <button class="opt-btn" onclick="selectScore(3)">3</button>
+            <button class="opt-btn" onclick="selectScore(4)">4</button>
+            <button class="opt-btn" onclick="selectScore(5)">5</button>
+        </div>
+        <button id="prev-btn" onclick="goPrev()" style="display:none; margin-top:30px; background:none; border:1px solid #444; color:#aaa; padding:8px 16px; border-radius:5px; cursor:pointer; font-size:14px;">이전으로</button>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const db = getFirestore(initializeApp({
+        apiKey: "AIzaSyCq19TCAGIDWDRFg5uqfFafJ6aMFC1AM8g",
+        authDomain: "wemento-board.firebaseapp.com",
+        projectId: "wemento-board",
+        storageBucket: "wemento-board.firebasestorage.app",
+        messagingSenderId: "995727815375",
+        appId: "1:995727815375:web:c07d2adc92cdb22bbf3dba"
+    }));
+
+    const typeData = {
+        A: { name: "치유의 요정", icon: "✨", desc: "관대함과 치유의 힘을 가질 수도 있고 사람들에게 유혹(아첨)하고 소유욕을 가질 수도 있다. 정이 많고 곤경에 빠진 사람들에게 도움의 손길을 뻗치며 주변 사람들에게 도움이 되는 일을 마다하지 않는다. 타인이 필요로 하는 것에 몰두하지만 타인의 도움을 필요로 하고 있는 자신에 대해서는 자각하지 못한다. 예리한 직감을 갖고 있고 주위 사람들의 기분을 이해하고 거기에 맞출 수 있기 때문에 적응력이 뛰어나다. 또한 다양한 자기 모습을 갖고 있어 상대방에 따라 다른 모습을 연출할 수 있다. 자신의 욕구를 돌보기보다는 타인의 욕구를 돌보고 도와주는 것에 만족을 느낀다. 이들의 근원적 문제는 자신의 상처를 인식하지도 못하고 도움을 거부하는 교만(자만심)과, ‘나는 줄 것만 있어’라고 생각하는 구세주, 순교자콤플렉스이다." },
+        B: { name: "성공의 러너", icon: "🏃", desc: "뛰어남과 진실성을 가질 수도 있고 맹목적으로 성공과 지위를 추구 할 수 도 있다. 항상 효율을 중시하고 성공을 위해서는 자신의 생활을 희생시키더라도 개의치 않는다. 자신이 세운 목표를 향해 남들도 효율적으로 매진할 것을 바라며 주위 사람들의 의욕을 고취시키는 것도 능숙하다. 인생의 가치를 ‘실패냐 성공이냐’ 라는 척도로 재고 실적을 중시하는 열정적인 사람으로 그들은 일이나 인간관계에서 성공을 꿈꾼다. 자신감에 넘친 인상으로 주위 사람들에게 좋은 인상을 심어주려 하며 ‘성공했다’ ‘일을 효율적이고 성공적으로 완수해냈다’는 것에 가장 큰 만족을 얻는다. 이들의 근원적 문제는 성공에 대한 집착으로 자신과 남을 기만하거나 속일 수(속임수) 있으며, 과도하면 허영에 빠진다." },
+        C: { name: "예술적 감상가", icon: "🎨", desc: "창조성과 직관을 가질 수도 있고, 우울증과자의식에 빠질 수도 있다. 자신은 특별한 사람이라고 자부하고 있으며 무엇보다도 감동을 중시하고 평범함을 싫어한다. 다른 사람들보다 슬픔이나 고독 등도 진하게 느낀다. 타인에 대한 이해심이 많고 사람들을 받쳐주고 격려하는 것을 좋아한다. 또한 자신을 드라마 속의 연기자처럼 느끼고 있으며 행동에서 패션에 이르기까지 세련된 느낌과 표현력이 풍부하다는 인상을 준다. ‘나는 특별한 존재이다’ ‘나는 독특한 존재이다’ ‘나는 감수성이 풍부하다’라는 자기 모습에 가장 큰 만족을 느낀다. 이들의 근원적 문제는 자신이 갖지 못한 것을 갖고 있는 사람들에 대한 질투와 우울한 환상, 어떤 것을 얻으면 바로 다른 것을 원하는 변덕이다." },
+        D: { name: "지적인 관찰자", icon: "🛡️", desc: "지성과 창의력을 가질 수도 있고, 괴팍하고 고립되어 있을 수도 있다.지식을 쌓아가는 것을 좋아하며 항상 현명하게 판단하려고 노력한다. 분석력과 통찰력이 뛰어나며 객관적이고 초연한 태도를 일관되게 유지하려고 한다. 현실을 파악하는 관찰력이 뛰어나지만 말이 적고 태도가 조심스럽다. 어리석은 판단을 내리는 것을 두려워하며 일을 시작하기 전에 정보를 열심히 수집해 상황을 정확하게 파악하려고 한다. 또한 고독을 즐기는 경향이 강하고 자신만의 시간과 공간을 아주 중요하게 여긴다. ‘지혜로운 사람’ ‘현명한 사람’ ‘무엇이든지 잘 알고 있는 사람’ 이라는 자신의 모습에 가장 큰 만족을 드러낸다. 이들의 근원적 문제는 자신을 드러내면 텅 빈 것같이 느껴져서 대인관계가 어렵고(비사교적), 말, 시간, 지식, 돈 등, 또 자신의 욕구에도 인색하다." },
+        E: { name: "충실한 수호자", icon: "🤝", desc: "용기와 헌신을 나타낼 수도 있고, 의심과 두려움에 빠질 수도 있다. 책임감이 강하고 안전을 추구하는 유형으로서 친구나 자기가 믿는 신념에 가장 충실한 사람들이다. 전통이나 단체에 강한 충성심을 갖고 있으며 공동체의 헌신이 대단하다. 신중하며 거짓말을 모르는 그들은 협조적이며 조화를 이루며 믿음직스럽다. 상대에게 호감을 주는 유형이다. ‘책임감이 있다’ ‘신실하다, 충성스럽고 믿을 만하다’는 말에 가장 큰 만족을 얻는다. 이들의 근원적 문제는 안전에 대한 보상으로 사소한 근심과 불필요한 의심에 시달리며, 미래에 대한 지나친 걱정으로 최악의 상태를 떠올리며 상상 속의 공포에 빠진다." },
+        F: { name: "낙천적 여행가", icon: "🎈", desc: "다양성과 기발함으로 뛰어나게 될 수도 있고, 충동적이고 인내심이 없을 수도 있다. 모든 일을 낙관적으로 보려고 하며 밝고 명랑하다. 그리고 자기 주변에서 즐거움을 찾아내는 능력이 뛰어나다. 좋아하는 사람들이 주변에 많이 있으며 자기 자신도 매력적인 인간이 되려고 노력한다. 또한 아이디어와 상상력이 풍부하며 호기심이 많다. ‘항상 즐겁다’ ‘너무나 유쾌하다’ ‘앞으로의 계획이 무궁무진하다’라는 것에 만족을 얻는다. 이들의 근원적 문제는 내면의 두려움, 공허함 때문에 폭음(폭식), 방종(무절제)에 빠질 수 있으며, 싫증을 쉽게 느끼고, 고통을 피하려 흥분과 재미를 탐닉하게 된다." },
+        G: { name: "정의로운 전사", icon: "⚔️", desc: "강하고 관대한 지도자가 될 수도 있고 사람들을 위협하고 통제하는사람이 될 수도 있다. 자신이 옳다고 생각하는 것에 대해서는 전력을 다해 싸우는 전사이다. 용기와 힘이 넘치고 허영심 등을 재빠르게 꿰뚫어 보며 그것에 결연히 대항한다. 권력구조를 파악하는 능력이 뛰어나며 자신의 강한 힘을 발휘할 수 있는 위치를 확보하는 능력도 갖추고 있다. 거드름을 피우지 않고 성실하며 약자를 옹호하고 보호하려고 한다. ‘힘이 있다’ ‘할 수 있다’ ‘힘이 넘친다’라는 자신의 모습에 가장 만족을 느낀다. 이들의 근원적 문제는 자신의 잘못을 인정하지 않고 큰소리치며 부정, 부인하는 것과, 타인을 이용하고 소유하고 억압하면서 양심의 가책을 느끼지 못하는 파렴치함이다." },
+        H: { name: "평화주의자", icon: "🕊️", desc: "사람들을 화합하게 하고 갈등을 치유할 수도 있고, 수동적이고 고집스러워질 수도 있다. 갈등이나 긴장을 피하는 평화주의자로 자신의 내면이 혼란스러워지는 것을 싫어한다. 다른 사람들에게 쉽게 동화되기 때문에 주의 사람들의 영향을 받긴 쉽지만 좋은 환경에 있으면 마음이 넓고 동요되는 일이 없으며 인내심이 강하다. 편견이 없고 다른 사람의 기분을 이해할 줄 알기 때문에 타인의 고민을 잘 들어준다. ‘안정감’과 ‘조화’로 넘쳐 있는 상태에 가장 큰 만족을 느낀다. 이들의 근원적 문제는 세상에 뛰어들어 활기차게 살려고 하지 않고 안일하게 살려고 하는 데서 오는 나태함(게으름)과, 갈등을 피하기 위해 할 일을 뒤로 미루는 것이다." },
+        I: { name: "냉철한 완벽주의자", icon: "⚖️", desc: "높은 인격과 이성을 가질 수도 있고 완벽주의와 독선을 가질 수도 있다. 매사에 완벽을 기하고 스스로의 이상을 건설적인 자세로 추구하며 이를 위한 노력을 아끼지 않는다. 항상 공정함과 정의를 염두에 두고 정직하고 신뢰할 수 있는 성품으로 자신의 윤리관에 자신감을 갖고 있다. 인상이 깔끔하고 항상 자제하는 자세를 잃지 않고 ‘해야 한다’는 말을 자주 한다. 자신은 ‘올바른 길을 걷고 있다’ ‘매사를 정확하게 파악하고 있다’는 생각에 만족감을 느낀다. 이들의 근원적 문제는 ‘내가 옳다’는 독선과, 분노를 들키지 않으려는 억압된 분노이다." }
+    };
+
+    const groupData = {
+        '가슴형': { types: ['A', 'B', 'C'], desc: "나는 한번에 한 사람씩 사랑한다(테레사). 도와줄 사람을 찾아다니며, 봉사적이고 헌신적임. 관계가 중요하고 과거에 얽매이기 쉬움. 인정받으려는 욕구가 크며 내가 필요한 사람이면 행복해함." },
+        '머리형': { types: ['D', 'E', 'F'], desc: "나는 생각한다 고로 나는 존재한다. 생각에 몰두하길 좋아함. 판단하길 좋아하며 정확하고 분석적임. 전반적이고 객관적인 상황을 봄. 안전에 대한 욕구, 불안감이 사라질 때까지 고민. 논리와 이성, 타당성 유무 확인." },
+        '장형': { types: ['G', 'H', 'I'], desc: "본능이 중요. 영역표시, 내 사람과 요 사람을 구분함. 권위적이고 무게감이 있음. 현재가 중요함. 단도직입적인 말투, 통제하고 지배하려는 욕구, 분노가 표현되면 주변이 쑥대밭." }
+    };
+
+    const questions = [
+        { id: 1, text: "나는 무엇인가에 집중하여 통달한다", weights: {D: 1} },
+        { id: 2, text: "나는 자기만족적이며 태평한 편이다", weights: {H: 1} },
+        { id: 3, text: "나는 모든 일을 개선하기 위해 깊이 생각해서 행동한다", weights: {I: 1} },
+        { id: 4, text: "나에게는 지도자로서의 기질이 있다", weights: {G: 1} },
+        { id: 5, text: "나는 감성적이어서 혼자 있을 때가 많다", weights: {C: 1} },
+        { id: 6, text: "나는 자발적으로 재미 있는 일을 즐긴다", weights: {F: 1} },
+        { id: 7, text: "나는 다른 사람들과 함께 일하기를 더 좋아한다", weights: {A: 1} },
+        { id: 8, text: "나는 문제가 있으면 풀릴 때까지 그것만 골똘히 생각한다", weights: {D: 1} },
+        { id: 9, text: "나는 의사결정을 할 때 적절히 지도력을 발휘한다", weights: {G: 1} },
+        { id: 10, text: "나는 감정의 동요가 많지 않은 원만한 사람이다", weights: {H: 1} },
+        { id: 11, text: "나는 공적인 것보다는 개인생활에 관심이 많다", weights: {D: 1} },
+        { id: 12, text: "나는 안전한 해결책을 원하고 되도록 갈등을 피한다", weights: {H: 1} },
+        { id: 13, text: "나는 혼자서 자신만의 고상한 취미를 즐긴다", weights: {C: 1} },
+        { id: 14, text: "나의 관심사는 다른 사람들을 도와주는 것이다", weights: {A: 1} },
+        { id: 15, text: "나는 모험적이며 위험을 감수하는 편이다", weights: {F: 1} },
+        { id: 16, text: "나는 능력을 발휘하는 데 많은 시간을 투자한다", weights: {B: 1} },
+        { id: 17, text: "나는 낭만적이고 예술적인 기질이 있다", weights: {C: 1} },
+        { id: 18, text: "나는 끊임없이 변화하는 생활을 좋아한다", weights: {F: 1} },
+        { id: 19, text: "나는 사람들에게 칭찬을 잘한다", weights: {A: 1} },
+        { id: 20, text: "나는 친구들과 긴장을 풀고 마음 편하게 지낸다", weights: {H: 1} },
+        { id: 21, text: "나는 다른 사람들보다 근면하여 책임감이 강하다", weights: {I: 1} },
+        { id: 22, text: "나는 명확한 지침이 있을 때 일이 능률이 오른다", weights: {E: 1} },
+        { id: 23, text: "내 생각보다는 남의 생각에 공감할 때가 많다", weights: {A: 1} },
+        { id: 24, text: "나는 늘 강해야 한다고 생각한다", weights: {G: 1} },
+        { id: 25, text: "나는 정직하고 자제력이 있는 사람이다", weights: {I: 1} },
+        { id: 26, text: "나는 사랑하는 사람을 가끔 의심하는 편이다", weights: {E: 1} },
+        { id: 27, text: "나는 사람들을 유쾌하고 편하게 대한다", weights: {H: 1} },
+        { id: 28, text: "나는 자극과 흥분을 유발하는 활동을 좋아한다", weights: {F: 1} },
+        { id: 29, text: "나는 감정보다는 이성을 추구한다", weights: {D: 1} },
+        { id: 30, text: "나는 과정보다는 결과를 중시한다", weights: {B: 1} },
+        { id: 31, text: "나는 어린아이처럼 명랑하고 순진하다", weights: {F: 1} },
+        { id: 32, text: "나는 인간중심적이기보다는 오히려 목표 중심적이다", weights: {B: 1} },
+        { id: 33, text: "나의 행동은 원칙에 기초를 둔다", weights: {I: 1} },
+        { id: 34, text: "나의 성공에 대해서도 가끔 평가절하하는 경향이 있다", weights: {E: 1} },
+        { id: 35, text: "나는 완벽을 위해 끝까지 참고 노력한다", weights: {I: 1} },
+        { id: 36, text: "나는 사람들에게 영향력 있는 사람이다", weights: {G: 1} },
+        { id: 37, text: "나는 스스로도 이방인처럼 느낄 때가 많다", weights: {C: 1} },
+        { id: 38, text: "나는 시간이나 돈을 아끼는 경향이 있다", weights: {D: 1} },
+        { id: 39, text: "나는 적응력이 뛰어나 상황에 적절히 대응한다", weights: {B: 1} },
+        { id: 40, text: "나는 잘 훈련되어 있어 조직이나 집단에 헌신할 수 있다", weights: {E: 1} },
+        { id: 41, text: "나는 다른 사람들과는 다른 독특한 감정을 가지고 있다", weights: {C: 1} },
+        { id: 42, text: "나는 다른 사람들이 말하기 어려워하는 것을 이야기한다", weights: {G: 1} },
+        { id: 43, text: "나는 분위기에 약하고 자기 생각에 골몰하는 편이다", weights: {C: 1} },
+        { id: 44, text: "나는 공격적이고 자기주장이 강하다", weights: {G: 1} },
+        { id: 45, text: "나는 사람들에게 지나친 경쟁을 강요한다", weights: {B: 1} },
+        { id: 46, text: "나의 관심사는 나를 둘러싼 세계를 이해하는 것이다", weights: {D: 1} },
+        { id: 47, text: "나는 사람들을 통제하려 한다", weights: {G: 1} },
+        { id: 48, text: "나는 친구들이 나에게 의지할 때 기분이 좋다", weights: {A: 1} },
+        { id: 49, text: "나는 모든 일에서 안정을 가장 중요하게 생각한다", weights: {E: 1} },
+        { id: 50, text: "나는 사람들에 대한 배려보다는 일의 성취를 더 중요하게 생각한다", weights: {B: 1} },
+        { id: 51, text: "사람들은 나를 그냥 좋아한다", weights: {H: 1} },
+        { id: 52, text: "나는 사람을 관심있게 대하고 보살피려 한다", weights: {A: 1} },
+        { id: 53, text: "나는 사람들을 지시하고 동기를 부여한다", weights: {G: 1} },
+        { id: 54, text: "나는 규칙을 잘 지키며 엄격하다", weights: {I: 1} },
+        { id: 55, text: "나는 세상에 대해 낙관적인 편이다", weights: {H: 1} },
+        { id: 56, text: "나는 나의 권위를 믿지 않고 규칙을 무시한다", weights: {D: 1} },
+        { id: 57, text: "나는 미래에 대해 항상 열정을 가지고 있다", weights: {F: 1} },
+        { id: 58, text: "나는 강한 자신감으로 사람들을 설득시킨다", weights: {G: 1} },
+        { id: 59, text: "사람들은 내게 때로 용기가 필요하다고 한다", weights: {E: 1} },
+        { id: 60, text: "나는 다른 사람들의 신임을 얻을 수 있다", weights: {I: 1} },
+        { id: 61, text: "사람들이 하는 일은 각자의 뜻이므로 나와는 상관없는 일이다", weights: {H: 1} },
+        { id: 62, text: "나는 사람들과 친해지려고 많이 노력하고 있다", weights: {A: 1} },
+        { id: 63, text: "나는 여러 가지 일들을 즐기며 새로운 경험을 갈망한다", weights: {F: 1} },
+        { id: 64, text: "나는 내 행동의 동기와 감정에 대해 회의감이 들 때가 있다", weights: {C: 1} },
+        { id: 65, text: "나는 정의감이 강하고 근면하다", weights: {I: 1} },
+        { id: 66, text: "나는 성공만이 애정을 획득할 수 있다고 믿는다", weights: {B: 1} },
+        { id: 67, text: "나는 한 가지 일에 정착하기가 어렵다", weights: {F: 1} },
+        { id: 68, text: "나는 지적이고 냉철하게 관찰하는 편이다", weights: {D: 1} },
+        { id: 69, text: "나는 결과에 대한 두려움 때문에 일을 질질 끄는 경우가 있다", weights: {E: 1} },
+        { id: 70, text: "나는 조화로움을 추구하는 평화주의자이다", weights: {H: 1} },
+        { id: 71, text: "나는 실패를 두려워하여 과장하는 경향이 있다", weights: {B: 1} },
+        { id: 72, text: "나는 타인의 만족을 위해 노력한다", weights: {A: 1} },
+        { id: 73, text: "나는 주로 나의 양심과 이성에 따른다", weights: {I: 1} },
+        { id: 74, text: "나는 감동적인 것을 추구하다가 혼자 우울해지기도 한다", weights: {C: 1} },
+        { id: 75, text: "나는 머리로 모든 것을 이해하고 판단한다", weights: {D: 1} },
+        { id: 76, text: "나는 충성할 만한 사람이라고 판단되면 헌신할 수 있다", weights: {E: 1} },
+        { id: 77, text: "나는 타인의 호감을 얻기 위해 노력한다", weights: {A: 1} },
+        { id: 78, text: "나는 침체에 빠지지 않고 무엇인가를 끊임없이 행한다", weights: {B: 1} },
+        { id: 79, text: "나는 현실에 만족하지 않고 새로운 것을 추구한다", weights: {F: 1} },
+        { id: 80, text: "나는 비현실적인 몽상가적 기질을 가지고 있다", weights: {C: 1} },
+        { id: 81, text: "나는 친하게 지내는 사람과 영원한 우정을 유지하도록 노력한다", weights: {E: 1} }
+    ];
+    let currentIdx = 0;
+    let userAnswers = [];
+
+    window.selectScore = (score) => {
+        userAnswers[currentIdx] = score;
+        currentIdx++;
+        if (currentIdx < questions.length) updateQuestion();
+        else showResults();
+    }
+
+    window.goPrev = () => { if (currentIdx > 0) { currentIdx--; updateQuestion(); } }
+
+    function updateQuestion() {
+        const q = questions[currentIdx];
+        document.getElementById('question').innerText = `${currentIdx + 1}. ${q.text}`;
+        document.getElementById('progress').style.width = `${(currentIdx / questions.length) * 100}%`;
+        document.getElementById('prev-btn').style.display = currentIdx > 0 ? 'inline-block' : 'none';
+    }
+
+    async function showResults() {
+        let finalScores = {A:0, B:0, C:0, D:0, E:0, F:0, G:0, H:0, I:0};
+        questions.forEach((q, i) => {
+            const points = userAnswers[i] || 3;
+            for (let type in q.weights) finalScores[type] += points;
+        });
+
+        const maxGroup = Object.keys(groupData).reduce((a, b) => {
+            let sA = groupData[a].types.reduce((sum, t) => sum + finalScores[t], 0);
+            let sB = groupData[b].types.reduce((sum, t) => sum + finalScores[t], 0);
+            return sA > sB ? a : b;
+        });
+        const maxScore = Math.max(...Object.values(finalScores));
+        const topTypes = Object.keys(finalScores).filter(type => finalScores[type] === maxScore);
+
+        // --- [여기에요!] DB 저장 ---
+        try {
+            await addDoc(collection(db, "enneagram_results"), { topTypes, scores: finalScores, maxGroup, timestamp: new Date() });
+        } catch (e) { console.error(e); }
+
+        const container = document.getElementById('app');
+        container.innerHTML = `
+            <h2>검사 결과: 당신은 ${maxGroup}입니다!</h2>
+            <div class="group-desc"><strong>${maxGroup} 특징:</strong><br>${groupData[maxGroup].desc}</div>
+            <canvas id="resultChart"></canvas>
+            <h3>가장 높은 성향 유형</h3>
+            <div id="top-desc-list"></div>
+            <button class="restart-btn" onclick="location.reload()">다시 시작하기</button>
+        `;
+
+        document.getElementById('top-desc-list').innerHTML = topTypes.map(t => `
+            <div class="result-desc">
+                <span class="char-icon">${typeData[t].icon}</span>
+                <strong>${t}형 - ${typeData[t].name} (점수: ${maxScore}점)</strong>
+                <p>${typeData[t].desc}</p>
+            </div>
+        `).join("");
+
+        new Chart(document.getElementById('resultChart'), {
+            type: 'radar',
+            plugins: [ChartDataLabels],
+            data: { labels: Object.keys(finalScores), datasets: [{ data: Object.values(finalScores), backgroundColor: 'rgba(0, 230, 118, 0.2)', borderColor: '#00e676', pointBackgroundColor: '#00e676' }] },
+            options: { plugins: { legend: { display: false }, datalabels: { color: '#ffffff', anchor: 'end', align: 'top', font: { weight: 'bold' } } }, scales: { r: { min: 0, max: 45, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.2)' }, pointLabels: { color: '#ffffff' } } } }
+        });
+    }
+
+    updateQuestion();
+</script>
+</body>
+</html>

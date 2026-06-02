@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wemento - Community</title>
+    <title>Studio AI - Community</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Pretendard', -apple-system, system-ui, sans-serif; background-color: #000000; color: #ffffff; line-height: 1.6; padding-top: 120px; }
@@ -16,9 +16,17 @@
         .board-header { margin-bottom: 40px; text-align: center; }
         .board-header h1 { font-size: 2.8rem; font-weight: 700; margin-bottom: 10px; }
         .board-header p { color: #666666; font-size: 16px; }
-        .board-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; border-bottom: 1px solid #1a1a1c; padding-bottom: 15px; }
-        .tab-btn { background: none; border: 1px solid #222225; color: #888888; padding: 12px 25px; font-size: 15px; font-weight: 600; border-radius: 30px; cursor: pointer; transition: all 0.3s ease; }
+        
+        /* 수정된 탭 레이아웃 */
+        .board-tabs { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid #1a1a1c; padding-bottom: 15px; }
+        .left-tabs { display: flex; gap: 15px; }
+        .tab-btn { background: none; border: 1px solid #222225; color: #888888; padding: 12px 25px; font-size: 15px; font-weight: 600; border-radius: 30px; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-block; }
         .tab-btn.active { background-color: #00e676; border-color: #00e676; color: #000000; box-shadow: 0 0 15px rgba(0, 230, 118, 0.3); }
+        
+        /* 성향검사 버튼 전용 스타일 */
+        .test-btn { background-color: #00e676; border-color: #00e676; color: #000000; font-weight: 800; }
+        .test-btn:hover { background-color: #ffffff; border-color: #ffffff; transform: translateY(-2px); }
+
         .write-box { background-color: #0a0a0c; border: 1px solid #1a1a1c; padding: 30px; border-radius: 16px; margin-bottom: 50px; }
         .input-row { display: flex; gap: 15px; margin-bottom: 20px; }
         .form-group { flex: 1; }
@@ -40,7 +48,7 @@
 </head>
 <body>
     <header>
-        <a href="index.html" class="logo">WEMENTO<span>.</span></a>
+        <a href="index.html" class="logo">Studio AI<span>.</span></a>
         <a href="index.html" class="back-btn">◀ 메인으로 돌아가기</a>
     </header>
 
@@ -51,9 +59,12 @@
         </div>
 
         <div class="board-tabs">
-            <button class="tab-btn active" onclick="switchBoard('posts_free', this)">자유게시판</button>
-            <button class="tab-btn" onclick="switchBoard('posts_qna', this)">질문 & 답변</button>
-            <button class="tab-btn" onclick="switchBoard('posts_notice', this)">공지사항</button>
+            <div class="left-tabs">
+                <button class="tab-btn active" onclick="switchBoard('posts_free', this)">자유게시판</button>
+                <button class="tab-btn" onclick="switchBoard('posts_qna', this)">질문 & 답변</button>
+                <button class="tab-btn" onclick="switchBoard('posts_notice', this)">공지사항</button>
+            </div>
+            <a href="enneagram.html" class="tab-btn test-btn">성향검사 시작하기 ✨</a>
         </div>
 
         <div class="write-box">
