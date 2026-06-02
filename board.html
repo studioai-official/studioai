@@ -6,83 +6,39 @@
     <title>Wemento - Community</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Pretendard', -apple-system, system-ui, sans-serif;
-            background-color: #000000; color: #ffffff; line-height: 1.6; padding-top: 120px;
-        }
-        header {
-            position: fixed; top: 0; left: 0; width: 100%;
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 25px 50px; background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px); z-index: 1000;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
+        body { font-family: 'Pretendard', -apple-system, system-ui, sans-serif; background-color: #000000; color: #ffffff; line-height: 1.6; padding-top: 120px; }
+        header { position: fixed; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 25px 50px; background-color: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 1000; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
         .logo { font-size: 24px; font-weight: 800; color: #ffffff; text-decoration: none; }
         .logo span { color: #00e676; }
         .back-btn { color: #aaaaaa; text-decoration: none; font-size: 15px; transition: color 0.3s; }
         .back-btn:hover { color: #00e676; }
-
         .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
         .board-header { margin-bottom: 40px; text-align: center; }
         .board-header h1 { font-size: 2.8rem; font-weight: 700; margin-bottom: 10px; }
         .board-header p { color: #666666; font-size: 16px; }
-
-        .board-tabs {
-            display: flex; justify-content: center; gap: 15px;
-            margin-bottom: 40px; border-bottom: 1px solid #1a1a1c; padding-bottom: 15px;
-        }
-        .tab-btn {
-            background: none; border: 1px solid #222225; color: #888888;
-            padding: 12px 25px; font-size: 15px; font-weight: 600;
-            border-radius: 30px; cursor: pointer; transition: all 0.3s ease;
-        }
-        .tab-btn:hover { border-color: #555555; color: #ffffff; }
-        .tab-btn.active {
-            background-color: #00e676; border-color: #00e676; color: #000000;
-            box-shadow: 0 0 15px rgba(0, 230, 118, 0.3);
-        }
-
-        .write-box {
-            background-color: #0a0a0c; border: 1px solid #1a1a1c; padding: 30px; border-radius: 16px; margin-bottom: 50px;
-        }
+        .board-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; border-bottom: 1px solid #1a1a1c; padding-bottom: 15px; }
+        .tab-btn { background: none; border: 1px solid #222225; color: #888888; padding: 12px 25px; font-size: 15px; font-weight: 600; border-radius: 30px; cursor: pointer; transition: all 0.3s ease; }
+        .tab-btn.active { background-color: #00e676; border-color: #00e676; color: #000000; box-shadow: 0 0 15px rgba(0, 230, 118, 0.3); }
+        .write-box { background-color: #0a0a0c; border: 1px solid #1a1a1c; padding: 30px; border-radius: 16px; margin-bottom: 50px; }
         .input-row { display: flex; gap: 15px; margin-bottom: 20px; }
-        .input-row .form-group { flex: 1; margin-bottom: 0; }
-
-        .form-group input, .write-box textarea {
-            width: 100%; background-color: #121214; border: 1px solid #222225;
-            padding: 16px; border-radius: 10px; color: #ffffff; font-size: 15px; outline: none; transition: all 0.3s;
-        }
-        .form-group input:focus, .write-box textarea:focus { border-color: #00e676; box-shadow: 0 0 10px rgba(0, 230, 118, 0.1); }
-        .write-box textarea { height: 140px; resize: none; width: 100%; }
-        
-        .submit-row { text-align: right; margin-top: 20px; }
-        .submit-btn {
-            background-color: #00e676; color: #000000; border: none;
-            padding: 14px 40px; border-radius: 30px; font-weight: 600; font-size: 15px; cursor: pointer; transition: all 0.2s;
-        }
+        .form-group { flex: 1; }
+        input, textarea { width: 100%; background-color: #121214; border: 1px solid #222225; padding: 16px; border-radius: 10px; color: #ffffff; font-size: 15px; outline: none; transition: all 0.3s; }
+        textarea { height: 140px; resize: none; }
+        .submit-btn { background-color: #00e676; color: #000000; border: none; padding: 14px 40px; border-radius: 30px; font-weight: 600; font-size: 15px; cursor: pointer; transition: all 0.2s; }
         .submit-btn:hover { transform: translateY(-2px); background-color: #ffffff; }
-
         .feed-list { display: flex; flex-direction: column; gap: 25px; }
         .feed-item { background-color: #0a0a0c; border: 1px solid #1a1a1c; padding: 30px; border-radius: 16px; }
         .feed-meta { display: flex; justify-content: space-between; margin-bottom: 15px; color: #444444; font-size: 14px; }
         .feed-author { color: #00e676; font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 6px; }
         .feed-content { color: #dddddd; font-size: 16px; white-space: pre-line; line-height: 1.8; }
-        
         .admin-badge { background-color: rgba(0, 230, 118, 0.1); color: #00e676; border: 1px solid #00e676; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 700; }
-        .delete-btn { background: none; border: none; color: #444444; cursor: pointer; font-size: 13px; margin-left: 15px; transition: color 0.3s; }
+        .action-btns { display: flex; gap: 10px; }
+        .edit-btn, .delete-btn { background: none; border: none; color: #444444; cursor: pointer; font-size: 13px; transition: color 0.3s; }
+        .edit-btn:hover { color: #ffffff; }
         .delete-btn:hover { color: #ff5252; }
-        .no-data { text-align: center; color: #444444; padding: 60px 0; }
-
-        @media screen and (max-width: 768px) {
-            body { padding-top: 90px; } header { padding: 15px 20px; }
-            .board-header h1 { font-size: 2rem; }
-            .input-row { flex-direction: column; gap: 15px; }
-            .write-box, .feed-item { padding: 20px; }
-        }
     </style>
 </head>
 <body>
-
     <header>
         <a href="index.html" class="logo">WEMENTO<span>.</span></a>
         <a href="index.html" class="back-btn">◀ 메인으로 돌아가기</a>
@@ -102,17 +58,11 @@
 
         <div class="write-box">
             <div class="input-row">
-                <div class="form-group">
-                    <input type="text" id="author-input" placeholder="닉네임을 입력하세요" maxlength="10">
-                </div>
-                <div class="form-group">
-                    <input type="password" id="password-input" placeholder="비밀번호 (4자리 이상)" maxlength="12">
-                </div>
+                <div class="form-group"><input type="text" id="author-input" placeholder="닉네임" maxlength="10"></div>
+                <div class="form-group"><input type="password" id="password-input" placeholder="비밀번호 (4자리 이상)" maxlength="12"></div>
             </div>
-            <div class="form-group">
-                <textarea id="content-input" placeholder="이곳에 남길 내용을 자유롭게 적어주세요..." maxlength="300"></textarea>
-            </div>
-            <div class="submit-row">
+            <div class="form-group"><textarea id="content-input" placeholder="내용을 남겨주세요..." maxlength="300"></textarea></div>
+            <div style="text-align: right; margin-top: 20px;">
                 <button class="submit-btn" onclick="addPost()">POSTING</button>
             </div>
         </div>
@@ -122,7 +72,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCq19TCAGIDWDRFg5uqfFafJ6aMFC1AM8g",
@@ -133,115 +83,94 @@
             appId: "1:995727815375:web:c07d2adc92cdb22bbf3dba"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        
-        let currentCollectionName = "posts_free"; 
-        let unsubscribe = null; 
+        const db = getFirestore(initializeApp(firebaseConfig));
+        let currentCollectionName = "posts_free";
+        let unsubscribe = null;
 
-        const feedContainer = document.getElementById('feed-container');
-
-        window.switchBoard = function(collectionName, buttonElement) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            buttonElement.classList.add('active');
-            currentCollectionName = collectionName;
+        window.switchBoard = (name, btn) => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentCollectionName = name;
             startListening();
         }
 
         function startListening() {
             if (unsubscribe) unsubscribe();
-            const postsCollection = collection(db, currentCollectionName);
-            const q = query(postsCollection, orderBy("timestamp", "asc"));
-            
-            unsubscribe = onSnapshot(q, (snapshot) => {
-                feedContainer.innerHTML = '';
-                if (snapshot.empty) {
-                    feedContainer.innerHTML = `<div class="no-data">아직 등록된 이야기가 없습니다. 첫 포스팅의 주인공이 되어보세요!</div>`;
-                    return;
-                }
-                const docsArray = [];
-                snapshot.forEach(doc => docsArray.push({ id: doc.id, ...doc.data() }));
-                docsArray.reverse().forEach((post) => {
+            unsubscribe = onSnapshot(query(collection(db, currentCollectionName), orderBy("timestamp", "asc")), (snapshot) => {
+                const container = document.getElementById('feed-container');
+                container.innerHTML = '';
+                const posts = [];
+                snapshot.forEach(doc => posts.push({ id: doc.id, ...doc.data() }));
+                posts.reverse().forEach(p => {
                     const item = document.createElement('div');
                     item.className = 'feed-item';
-                    const adminBadgeHtml = post.isAdmin ? `<span class="admin-badge">ADMIN</span>` : '';
-
                     item.innerHTML = `
                         <div class="feed-meta">
-                            <span class="feed-author">${escapeHtml(post.author)} ${adminBadgeHtml}</span>
-                            <div>
-                                <span>${post.date}</span>
-                                <button class="delete-btn" data-id="${post.id}">삭제</button>
+                            <span class="feed-author">${escapeHtml(p.author)} ${p.isAdmin ? '<span class="admin-badge">ADMIN</span>' : ''}</span>
+                            <div class="action-btns">
+                                <span>${p.date}</span>
+                                <button class="edit-btn" onclick="editPost('${p.id}')">수정</button>
+                                <button class="delete-btn" onclick="deletePost('${p.id}')">삭제</button>
                             </div>
                         </div>
-                        <div class="feed-content">${escapeHtml(post.content)}</div>
+                        <div class="feed-content">${escapeHtml(p.content)}</div>
                     `;
-                    feedContainer.appendChild(item);
-                });
-
-                document.querySelectorAll('.delete-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => deletePost(e.target.getAttribute('data-id')));
+                    container.appendChild(item);
                 });
             });
         }
 
-        window.addPost = async function() {
-            const authorInput = document.getElementById('author-input');
-            const passwordInput = document.getElementById('password-input');
-            const contentInput = document.getElementById('content-input');
+        window.editPost = async (id) => {
+            const docRef = doc(db, currentCollectionName, id);
+            const docSnap = await getDoc(docRef);
+            const inputPass = prompt('수정을 위해 비밀번호를 입력하세요:');
             
-            const author = authorInput.value.trim();
-            const password = passwordInput.value.trim();
-            const content = contentInput.value.trim();
+            const adminSnap = await getDoc(doc(db, "system_config", "admin_credential"));
+            const masterPass = adminSnap.exists() ? adminSnap.data().masterPassword : null;
 
-            if (!author || !password || !content) {
-                alert('닉네임, 비밀번호, 내용을 모두 적어주세요.');
-                return;
-            }
+            if (inputPass === docSnap.data().password || (masterPass && inputPass === masterPass)) {
+                const newContent = prompt('새로운 내용을 입력하세요:', docSnap.data().content);
+                if (newContent !== null) {
+                    await updateDoc(docRef, { content: newContent });
+                    alert('수정되었습니다.');
+                }
+            } else { alert('비밀번호가 일치하지 않습니다.'); }
+        }
 
-            let isAdminPost = false;
-            if (currentCollectionName === "posts_notice" || author === "관리자") {
-                try {
-                    const adminSnap = await getDoc(doc(db, "system_config", "admin_credential"));
-                    if (adminSnap.exists() && password === adminSnap.data().masterPassword) {
-                        isAdminPost = true;
-                    } else {
-                        alert('관리자 권한 인증에 실패했습니다.'); return;
-                    }
-                } catch (e) { alert('보안 검증 오류'); return; }
+        window.deletePost = async (id) => {
+            const docRef = doc(db, currentCollectionName, id);
+            const docSnap = await getDoc(docRef);
+            const inputPass = prompt('삭제를 위해 비밀번호를 입력하세요:');
+            
+            const adminSnap = await getDoc(doc(db, "system_config", "admin_credential"));
+            const masterPass = adminSnap.exists() ? adminSnap.data().masterPassword : null;
+
+            if (inputPass === docSnap.data().password || (masterPass && inputPass === masterPass)) {
+                await deleteDoc(docRef);
+                alert('삭제되었습니다.');
+            } else { alert('비밀번호가 일치하지 않습니다.'); }
+        }
+
+        window.addPost = async () => {
+            const author = document.getElementById('author-input').value.trim();
+            const password = document.getElementById('password-input').value.trim();
+            const content = document.getElementById('content-input').value.trim();
+            if(!author || !password || !content) return alert('모든 내용을 입력하세요.');
+
+            let isAdmin = false;
+            if(currentCollectionName === "posts_notice" || author === "관리자") {
+                const adminSnap = await getDoc(doc(db, "system_config", "admin_credential"));
+                if(adminSnap.exists() && password === adminSnap.data().masterPassword) isAdmin = true;
+                else return alert('관리자 권한 인증 실패');
             }
 
             const now = new Date();
-            const dateString = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-
-            try {
-                await addDoc(collection(db, currentCollectionName), {
-                    author: author, password: password, content: content,
-                    date: dateString, timestamp: Date.now(), isAdmin: isAdminPost 
-                });
-                authorInput.value = ''; passwordInput.value = ''; contentInput.value = '';
-            } catch (error) { alert("업로드 실패"); }
-        }
-
-        async function deletePost(id) {
-            const inputPassword = prompt('글을 삭제하시려면 비밀번호를 입력해 주세요:');
-            if (!inputPassword) return;
-
-            try {
-                const docRef = doc(db, currentCollectionName, id);
-                const docSnap = await getDoc(docRef);
-
-                if (docSnap.exists()) {
-                    const originalPassword = docSnap.data().password;
-                    const adminSnap = await getDoc(doc(db, "system_config", "admin_credential"));
-                    const masterPassword = adminSnap.exists() ? adminSnap.data().masterPassword : null;
-
-                    if (inputPassword === originalPassword || (masterPassword && inputPassword === masterPassword)) {
-                        await deleteDoc(docRef);
-                        alert('포스팅이 삭제되었습니다.');
-                    } else { alert('비밀번호가 일치하지 않습니다.'); }
-                }
-            } catch (error) { alert("삭제 에러"); }
+            await addDoc(collection(db, currentCollectionName), {
+                author, password, content, isAdmin,
+                date: `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,
+                timestamp: Date.now()
+            });
+            document.getElementById('content-input').value = '';
         }
 
         function escapeHtml(str) {
