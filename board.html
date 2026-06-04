@@ -4,64 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Studio AI - Community</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Pretendard', -apple-system, system-ui, sans-serif; background-color: #000000; color: #ffffff; line-height: 1.6; padding-top: 120px; }
-        header { position: fixed; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 25px 50px; background-color: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 1000; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-        .logo { font-size: 24px; font-weight: 800; color: #ffffff; text-decoration: none; }
-        .logo span { color: #00e676; }
-        .back-btn { color: #aaaaaa; text-decoration: none; font-size: 15px; transition: color 0.3s; }
-        .back-btn:hover { color: #00e676; }
-        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
-        .board-header { margin-bottom: 40px; text-align: center; }
-        .board-header h1 { font-size: 2.8rem; font-weight: 700; margin-bottom: 10px; }
-        .board-header p { color: #666666; font-size: 16px; }
+        /* 페이지별 전용 스타일 */
+        .board-header { text-align: center; margin-bottom: 40px; }
+        .board-header h1 { font-size: 2.5rem; font-weight: 700; color: #fff; margin-bottom: 10px; }
         
-        /* 수정된 탭 레이아웃 */
-        .board-tabs { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid #1a1a1c; padding-bottom: 15px; }
-        .left-tabs { display: flex; gap: 15px; }
-        .tab-btn { background: none; border: 1px solid #222225; color: #888888; padding: 12px 25px; font-size: 15px; font-weight: 600; border-radius: 30px; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-block; }
-        .tab-btn.active { background-color: #00e676; border-color: #00e676; color: #000000; box-shadow: 0 0 15px rgba(0, 230, 118, 0.3); }
-        
-        /* 성향검사 버튼 전용 스타일 */
-        .test-btn { background-color: #00e676; border-color: #00e676; color: #000000; font-weight: 800; }
-        .test-btn:hover { background-color: #ffffff; border-color: #ffffff; transform: translateY(-2px); }
+        .board-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #1a1a1c; }
+        .left-tabs { display: flex; gap: 10px; flex-grow: 1; }
+        .tab-btn { background: #0a0a0c; border: 1px solid #222225; color: #888; padding: 12px 20px; border-radius: 30px; cursor: pointer; text-decoration: none; font-size: 14px; font-weight: 600; transition: 0.3s; }
+        .tab-btn.active { background: #00e676; border-color: #00e676; color: #000; }
+        .test-btn { background: #00e676; color: #000; border: none; font-weight: 700; }
 
-        .write-box { background-color: #0a0a0c; border: 1px solid #1a1a1c; padding: 30px; border-radius: 16px; margin-bottom: 50px; }
-        .input-row { display: flex; gap: 15px; margin-bottom: 20px; }
-        .form-group { flex: 1; }
-        input, textarea { width: 100%; background-color: #121214; border: 1px solid #222225; padding: 16px; border-radius: 10px; color: #ffffff; font-size: 15px; outline: none; transition: all 0.3s; }
-        textarea { height: 140px; resize: none; }
-        .submit-btn { background-color: #00e676; color: #000000; border: none; padding: 14px 40px; border-radius: 30px; font-weight: 600; font-size: 15px; cursor: pointer; transition: all 0.2s; }
-        .submit-btn:hover { transform: translateY(-2px); background-color: #ffffff; }
-        .feed-list { display: flex; flex-direction: column; gap: 25px; }
-        .feed-item { background-color: #0a0a0c; border: 1px solid #1a1a1c; padding: 30px; border-radius: 16px; }
-        .feed-meta { display: flex; justify-content: space-between; margin-bottom: 15px; color: #444444; font-size: 14px; }
-        .feed-author { color: #00e676; font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 6px; }
-        .feed-content { color: #dddddd; font-size: 16px; white-space: pre-line; line-height: 1.8; }
-        .admin-badge { background-color: rgba(0, 230, 118, 0.1); color: #00e676; border: 1px solid #00e676; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 700; }
-        .action-btns { display: flex; gap: 10px; }
-        .edit-btn, .delete-btn { background: none; border: none; color: #444444; cursor: pointer; font-size: 13px; transition: color 0.3s; }
-        .edit-btn:hover { color: #ffffff; }
-        .delete-btn:hover { color: #ff5252; }
+        /* 입력 폼 간격 조절 */
+        .write-box { display: flex; flex-direction: column; gap: 15px; } /* 각 줄 사이 15px 간격 */
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { width: 100%; }
+        textarea { height: 120px; resize: none; width: 100%; }
+
+        .feed-item { background: #0a0a0c; border: 1px solid #1a1a1c; padding: 20px; border-radius: 16px; margin-bottom: 15px; }
+        .feed-meta { display: flex; justify-content: space-between; font-size: 13px; color: #666; margin-bottom: 10px; }
+        .feed-content { color: #ddd; white-space: pre-line; }
     </style>
 </head>
 <body>
     <header>
         <a href="index.html" class="logo">Studio AI<span>.</span></a>
-        <a href="index.html" class="back-btn">◀ 메인으로 돌아가기</a>
+        <a href="index.html" style="color:#aaa; text-decoration:none;">메인으로</a>
     </header>
 
     <div class="container">
         <div class="board-header">
             <h1>COMMUNITY</h1>
-            <p>자유로운 생각과 크리에이티브한 영감을 공유하는 공간입니다.</p>
+            <p style="color:#666;">자유로운 생각과 영감을 공유하세요.</p>
         </div>
 
         <div class="board-tabs">
             <div class="left-tabs">
                 <button class="tab-btn active" onclick="switchBoard('posts_free', this)">자유게시판</button>
-                <button class="tab-btn" onclick="switchBoard('posts_qna', this)">질문 & 답변</button>
+                <button class="tab-btn" onclick="switchBoard('posts_qna', this)">Q&A</button>
                 <button class="tab-btn" onclick="switchBoard('posts_notice', this)">공지사항</button>
             </div>
             <a href="enneagram.html" class="tab-btn test-btn">성향검사 시작하기 ✨</a>
@@ -69,21 +50,21 @@
 
         <div class="write-box">
             <div class="input-row">
-                <div class="form-group"><input type="text" id="author-input" placeholder="닉네임" maxlength="10"></div>
-                <div class="form-group"><input type="password" id="password-input" placeholder="비밀번호 (4자리 이상)" maxlength="12"></div>
+                <input type="text" id="author-input" placeholder="닉네임" maxlength="10">
+                <input type="password" id="password-input" placeholder="비밀번호(4자)" maxlength="12">
             </div>
-            <div class="form-group"><textarea id="content-input" placeholder="내용을 남겨주세요..." maxlength="300"></textarea></div>
-            <div style="text-align: right; margin-top: 20px;">
-                <button class="submit-btn" onclick="addPost()">POSTING</button>
+            <div class="form-group">
+                <textarea id="content-input" placeholder="내용을 남겨주세요..." maxlength="300"></textarea>
             </div>
+            <button class="submit-btn" onclick="addPost()">POSTING</button>
         </div>
 
-        <div id="feed-container" class="feed-list"></div>
+        <div id="feed-container"></div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCq19TCAGIDWDRFg5uqfFafJ6aMFC1AM8g",
@@ -107,59 +88,23 @@
 
         function startListening() {
             if (unsubscribe) unsubscribe();
-            unsubscribe = onSnapshot(query(collection(db, currentCollectionName), orderBy("timestamp", "asc")), (snapshot) => {
+            unsubscribe = onSnapshot(query(collection(db, currentCollectionName), orderBy("timestamp", "desc")), (snapshot) => {
                 const container = document.getElementById('feed-container');
                 container.innerHTML = '';
-                const posts = [];
-                snapshot.forEach(doc => posts.push({ id: doc.id, ...doc.data() }));
-                posts.reverse().forEach(p => {
+                snapshot.forEach(docSnap => {
+                    const p = docSnap.data();
                     const item = document.createElement('div');
                     item.className = 'feed-item';
                     item.innerHTML = `
                         <div class="feed-meta">
-                            <span class="feed-author">${escapeHtml(p.author)} ${p.isAdmin ? '<span class="admin-badge">ADMIN</span>' : ''}</span>
-                            <div class="action-btns">
-                                <span>${p.date}</span>
-                                <button class="edit-btn" onclick="editPost('${p.id}')">수정</button>
-                                <button class="delete-btn" onclick="deletePost('${p.id}')">삭제</button>
-                            </div>
+                            <span><b>${p.author}</b> ${p.isAdmin ? '<span style="color:#00e676">ADMIN</span>' : ''}</span>
+                            <span>${p.date}</span>
                         </div>
-                        <div class="feed-content">${escapeHtml(p.content)}</div>
+                        <div class="feed-content">${p.content}</div>
                     `;
                     container.appendChild(item);
                 });
             });
-        }
-
-        window.editPost = async (id) => {
-            const docRef = doc(db, currentCollectionName, id);
-            const docSnap = await getDoc(docRef);
-            const inputPass = prompt('수정을 위해 비밀번호를 입력하세요:');
-            
-            const adminSnap = await getDoc(doc(db, "system_config", "admin_credential"));
-            const masterPass = adminSnap.exists() ? adminSnap.data().masterPassword : null;
-
-            if (inputPass === docSnap.data().password || (masterPass && inputPass === masterPass)) {
-                const newContent = prompt('새로운 내용을 입력하세요:', docSnap.data().content);
-                if (newContent !== null) {
-                    await updateDoc(docRef, { content: newContent });
-                    alert('수정되었습니다.');
-                }
-            } else { alert('비밀번호가 일치하지 않습니다.'); }
-        }
-
-        window.deletePost = async (id) => {
-            const docRef = doc(db, currentCollectionName, id);
-            const docSnap = await getDoc(docRef);
-            const inputPass = prompt('삭제를 위해 비밀번호를 입력하세요:');
-            
-            const adminSnap = await getDoc(doc(db, "system_config", "admin_credential"));
-            const masterPass = adminSnap.exists() ? adminSnap.data().masterPassword : null;
-
-            if (inputPass === docSnap.data().password || (masterPass && inputPass === masterPass)) {
-                await deleteDoc(docRef);
-                alert('삭제되었습니다.');
-            } else { alert('비밀번호가 일치하지 않습니다.'); }
         }
 
         window.addPost = async () => {
@@ -168,26 +113,15 @@
             const content = document.getElementById('content-input').value.trim();
             if(!author || !password || !content) return alert('모든 내용을 입력하세요.');
 
-            let isAdmin = false;
-            if(currentCollectionName === "posts_notice" || author === "관리자") {
-                const adminSnap = await getDoc(doc(db, "system_config", "admin_credential"));
-                if(adminSnap.exists() && password === adminSnap.data().masterPassword) isAdmin = true;
-                else return alert('관리자 권한 인증 실패');
-            }
-
             const now = new Date();
             await addDoc(collection(db, currentCollectionName), {
-                author, password, content, isAdmin,
-                date: `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,
+                author, password, content,
+                date: `${now.getMonth()+1}.${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`,
                 timestamp: Date.now()
             });
             document.getElementById('content-input').value = '';
         }
-
-        function escapeHtml(str) {
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
-
+        
         startListening();
     </script>
 </body>

@@ -1,0 +1,27 @@
+/* style.css */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Pretendard', -apple-system, system-ui, sans-serif; background-color: #000000; color: #ffffff; line-height: 1.6; padding-top: 100px; }
+
+/* 공통 헤더 */
+header { position: fixed; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 20px 50px; background-color: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 1000; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.logo { font-size: 24px; font-weight: 800; color: #ffffff; text-decoration: none; }
+.logo span { color: #00e676; }
+.back-btn { color: #aaaaaa; text-decoration: none; font-size: 15px; }
+.back-btn:hover { color: #00e676; }
+
+/* 공통 컨테이너 및 카드 */
+.container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+.write-box { background-color: #0a0a0c; border: 1px solid #1a1a1c; padding: 30px; border-radius: 16px; margin-bottom: 40px; }
+.form-group { margin-bottom: 15px; }
+input, textarea { width: 100%; background-color: #121214; border: 1px solid #222225; padding: 16px; border-radius: 10px; color: #ffffff; font-size: 15px; outline: none; transition: 0.3s; }
+input:focus, textarea:focus { border-color: #00e676; }
+
+/* 공통 버튼 */
+.submit-btn { background-color: #00e676; color: #000000; border: none; padding: 14px 40px; border-radius: 30px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+.submit-btn:hover { background-color: #ffffff; transform: translateY(-2px); }
+
+/* 모바일 대응 */
+@media screen and (max-width: 768px) {
+    header { padding: 15px 20px; }
+    .container { padding: 20px; }
+}

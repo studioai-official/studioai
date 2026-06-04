@@ -105,9 +105,11 @@
 
         document.getElementById('studyForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.innerText = "제출 중...";
+            btn.disabled = true;
 
             try {
-                // DB 필드명에 맞게 매핑 (address 필드 추가됨)
                 const data = {
                     author: document.getElementById('userName').value,
                     contact: document.getElementById('userContact').value,
@@ -124,11 +126,21 @@
                 };
 
                 await addDoc(collection(db, "applications"), data);
-                alert("신청이 완료되었습니다!");
-                window.location.href = "index.html";
+
+                const container = document.querySelector('.form-card');
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px 0;">
+                        <div style="font-size: 50px; margin-bottom: 20px;">✨</div>
+                        <h2 style="color: #ffffff; margin-bottom: 10px;">신청이 완료되었습니다!</h2>
+                        <p style="color: #999; margin-bottom: 30px;">검토 후 빠르게 연락드리겠습니다.</p>
+                        <button onclick="location.href='index.html'" class="submit-btn hover-target" style="width: auto; padding: 12px 30px;">메인으로 돌아가기</button>
+                    </div>
+                `;
             } catch (error) {
-                console.error("데이터 저장 실패:", error);
-                alert("저장에 실패했습니다. 다시 시도해주세요.");
+                console.error("저장 실패:", error);
+                alert("잠시 오류가 발생했습니다. 다시 시도해주세요.");
+                btn.innerText = "스터디 신청서 제출하기 ⚡";
+                btn.disabled = false;
             }
         });
     </script>
