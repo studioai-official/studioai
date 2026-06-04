@@ -51,7 +51,7 @@
         .core-info h3 { font-size: 14px; color: #666666; font-weight: 500; text-transform: uppercase; margin-bottom: 5px; }
         .core-info .total-num { font-size: 48px; font-weight: 900; color: #00e676; line-height: 1; }
 
-        /* 📋 신청자 리스트 테이블 스타일 추가 */
+        /* 📋 신청자 리스트 테이블 */
         .data-section {
             background-color: #0a0a0c; border: 1px solid #1a1a1c; border-radius: 16px; padding: 25px; margin-bottom: 30px;
             overflow-x: auto;
@@ -67,7 +67,7 @@
         .delete-btn { background: #221212; color: #ff5555; border: 1px solid #442222; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 12px; }
         .delete-btn:hover { background: #441111; color: #ffffff; }
 
-        /* 하단 로그 시스템 콘솔 */
+        /* 하단 로그 시스템 */
         .bottom-section { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
         .log-console { background-color: #020203; border: 1px solid #1a1a1c; border-radius: 16px; padding: 25px; font-family: 'Courier New', Courier, monospace; }
         .log-title { font-size: 14px; color: #88888c; margin-bottom: 15px; font-weight: bold; display: flex; justify-content: space-between; }
@@ -107,16 +107,10 @@
                 <h3>Total Recieved Applications</h3>
                 <div id="count-total" class="total-num">00</div>
             </div>
-            <div style="text-align: right; color: #444446; font-size: 12px; font-family: monospace;">
-                SECURE SSL LAYER V3<br>
-                REFRESH STATUS: REAL-TIME LIST
-            </div>
         </div>
 
         <div class="data-section">
-            <div class="section-title">
-                <span>📋 스터디 신청 서류 명단</span>
-            </div>
+            <div class="section-title"><span>📋 스터디 신청 서류 명단</span></div>
             <table>
                 <thead>
                     <tr>
@@ -132,9 +126,7 @@
                     </tr>
                 </thead>
                 <tbody id="applicant-list">
-                    <tr>
-                        <td colspan="9" style="text-align: center; color: #555;">데이터 로딩 대기 중...</td>
-                    </tr>
+                    <tr><td colspan="9" style="text-align: center; color: #555;">데이터 로딩 대기 중...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -154,7 +146,7 @@
             <div class="sys-info-box">
                 <div class="sys-info-title">INFRASTRUCTURE</div>
                 <div class="sys-row"><span>Engine</span><span>Firestore DB</span></div>
-                <div class="sys-row"><span>Target Collection</span><span>posts</span></div>
+                <div class="sys-row"><span>Target Collection</span><span>applications</span></div>
                 <div class="sys-row"><span>SDK Version</span><span>Firebase v10.8.0</span></div>
                 <div class="sys-row"><span>Status</span><span style="color:#00e676;">OPERATIONAL</span></div>
             </div>
@@ -174,57 +166,41 @@
             appId: "1:995727815375:web:c07d2adc92cdb22bbf3dba"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        const db = getFirestore(initializeApp(firebaseConfig));
 
-        // 게이트웨이 인증 체크
         window.checkGateKey = async function() {
             const passInput = document.getElementById('admin-gate-pass').value.trim();
             if(!passInput) return;
-
             try {
                 const adminSnap = await getDoc(doc(db, "system_config", "admin_credential"));
                 if (adminSnap.exists() && passInput === adminSnap.data().masterPassword) {
                     document.getElementById('admin-gate').style.display = 'none';
                     document.getElementById('admin-main').style.display = 'block';
-                    
                     writeLog("[SUCCESS] Master password verified successfully.");
-                    writeLog("[SYSTEM] Fetching cluster database records from 'posts'...");
                     loadApplicants();
                 } else {
-                    alert('ACCESS DENIED: Invalid Administrative Credentials.');
-                    writeLog("[WARNING] Failed access attempt detected with invalid token.");
+                    alert('ACCESS DENIED');
                 }
-            } catch (e) {
-                alert('CRITICAL SERVER ERROR');
-            }
+            } catch (e) { alert('CRITICAL ERROR'); }
         }
 
-        // 콘솔 로그 출력 펑션
         function writeLog(text) {
             const logBox = document.getElementById('log-box');
             const now = new Date();
-            const timeStr = `[${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}]`;
-            logBox.innerHTML += `${timeStr} ${text}<br>`;
+            logBox.innerHTML += `[${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}] ${text}<br>`;
             logBox.scrollTop = logBox.scrollHeight;
         }
 
-        // 신청서 실시간 취합 및 출력 로직
         async function loadApplicants() {
             const tbody = document.getElementById('applicant-list');
             try {
-                // 타임스탬프 역순(최신순) 정렬 쿼리
-                const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
+                // [수정 완료] 경로를 'applications'로 변경했습니다.
+                const q = query(collection(db, "applications"), orderBy("timestamp", "desc"));
                 const querySnapshot = await getDocs(q);
-                
                 tbody.innerHTML = "";
                 let count = 0;
-
                 querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
-                    // 게시판용 기존 글(content 필드 보유) 우회 처리 및 신청서 검증
-                    if (!data.contact && data.content) return; 
-
                     count++;
                     const row = document.createElement('tr');
                     row.innerHTML = `
@@ -246,32 +222,18 @@
                     `;
                     tbody.appendChild(row);
                 });
-
                 document.getElementById('count-total').innerText = String(count).padStart(2, '0');
-                writeLog(`[INFO] Synchronized ${count} cluster application profiles total.`);
-                writeLog(`[COMPLETE] Data pipeline plotting finished stably.`);
-
-                if(count === 0) {
-                    tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #555558; padding: 40px 0;">현재 접수된 스터디 신청서가 없습니다.</td></tr>`;
-                }
-
-            } catch (e) {
+            } catch (e) { 
                 console.error(e);
-                writeLog("[ERROR] Failed to fetch cloud DB records. Pipeline Interrupted.");
-                tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #ff5555;">데이터 정렬 인덱스를 생성 중이거나 로드에 실패했습니다.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #ff5555;">데이터 로드 실패</td></tr>`;
             }
         }
 
-        // 명단 삭제 기능 글로벌 바인딩
         window.deleteApplicant = async function(id, name) {
-            if(!confirm(`⚠️ 정말로 [ ${name} ] 님의 신청서 데이터를 영구 파기하시겠습니까?`)) return;
-            try {
-                await deleteDoc(doc(db, "posts", id));
-                writeLog(`[DELETE] Object ID (${id}) assigned to ${name} purged.`);
-                loadApplicants(); // 리스트 갱신
-            } catch(e) {
-                alert("삭제 권한이 없거나 오류가 발생했습니다.");
-            }
+            if(!confirm(`정말로 삭제하시겠습니까?`)) return;
+            // [수정 완료] 삭제 경로도 'applications'로 통일
+            await deleteDoc(doc(db, "applications", id));
+            loadApplicants();
         }
     </script>
 </body>
