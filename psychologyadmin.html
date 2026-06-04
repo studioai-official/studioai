@@ -12,7 +12,7 @@
             letter-spacing: -0.5px;
         }
         
-        /* 🔒 게이트웨이 디자인 */
+        /* 🔒 보안 로그인 게이트웨이 */
         .gate-container {
             max-width: 450px; margin: 120px auto; text-align: center;
             background-color: #0a0a0c; border: 1px solid #1a1a1c; padding: 50px 40px; border-radius: 20px;
@@ -22,13 +22,14 @@
         .gate-container p { color: #555558; font-size: 13px; margin-bottom: 30px; }
         .gate-container input {
             width: 100%; background-color: #121214; border: 1px solid #222225;
-            padding: 16px; border-radius: 12px; color: #ffffff; text-align: center; font-size: 16px; margin-bottom: 20px; outline: none;
+            padding: 16px; border-radius: 12px; color: #ffffff; font-size: 15px; margin-bottom: 14px; outline: none;
             transition: border-color 0.3s;
         }
         .gate-container input:focus { border-color: #00e676; }
         .gate-container button {
             background-color: #00e676; color: #000000; border: none; width: 100%;
             padding: 16px; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; transition: all 0.3s;
+            margin-top: 10px;
         }
         .gate-container button:hover { background-color: #ffffff; transform: translateY(-2px); }
 
@@ -39,24 +40,43 @@
         .admin-header h1 { font-size: 26px; font-weight: 800; color: #ffffff; }
         .admin-header p { color: #666666; font-size: 14px; margin-top: 5px; }
         
-        .server-status { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #88888c; background: #0a0a0c; padding: 8px 16px; border-radius: 20px; border: 1px solid #1a1a1c; }
+        .server-status { display: flex; align-items: center; gap: 15px; font-size: 13px; color: #88888c; }
+        .status-badge { display: flex; align-items: center; gap: 8px; background: #0a0a0c; padding: 8px 16px; border-radius: 20px; border: 1px solid #1a1a1c; }
         .status-dot { width: 8px; height: 8px; background-color: #00e676; border-radius: 50%; box-shadow: 0 0 8px #00e676; animation: blink 2s infinite; }
+        .logout-btn { background: #1a1a1c; color: #88888c; border: 1px solid #222225; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s; }
+        .logout-btn:hover { background: #ff5555; color: #ffffff; border-color: #ff5555; }
 
-        /* 상단 통계 스코어보드 */
+        /* 상단 통계 스코어보드 (4분할 레이아웃) */
         .core-analytics {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px;
+        }
+        .analytics-card {
             background: linear-gradient(135deg, #0a0a0c 0%, #111115 100%);
-            border: 1px solid #1a1a1c; padding: 35px; border-radius: 20px; margin-bottom: 30px;
+            border: 1px solid #1a1a1c; padding: 25px; border-radius: 20px;
             display: flex; justify-content: space-between; align-items: center;
         }
-        .core-info h3 { font-size: 14px; color: #666666; font-weight: 500; text-transform: uppercase; margin-bottom: 5px; }
-        .core-info .total-num { font-size: 48px; font-weight: 900; color: #00e676; line-height: 1; }
+        .core-info h3 { font-size: 12px; color: #666666; font-weight: 500; text-transform: uppercase; margin-bottom: 8px; }
+        .core-info .total-num { font-size: 36px; font-weight: 900; color: #00e676; line-height: 1; }
 
-        /* 📋 신청자 리스트 테이블 */
+        /* 🗂️ 게시판 셀렉트 탭 스타일 */
+        .board-tab-container {
+            display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid #1a1a1c; padding-bottom: 12px;
+        }
+        .board-tab {
+            background-color: #121215; color: #66666a; border: 1px solid #222225; padding: 10px 20px;
+            border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+        }
+        .board-tab:hover { color: #ffffff; border-color: #444; }
+        .board-tab.active {
+            background-color: #163a21; color: #00e676; border-color: #00e676;
+        }
+
+        /* 📋 데이터 레이아웃 섹션 */
         .data-section {
             background-color: #0a0a0c; border: 1px solid #1a1a1c; border-radius: 16px; padding: 25px; margin-bottom: 30px;
             overflow-x: auto;
         }
-        .section-title { font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 20px; display: flex; justify-content: space-between; }
+        .section-title { font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
         
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; min-width: 900px; }
         th { background-color: #121214; color: #00e676; font-weight: 600; padding: 14px 10px; border-bottom: 2px solid #1a1a1c; }
@@ -64,7 +84,7 @@
         tr:hover td { background-color: #111113; color: #ffffff; }
         
         .badge { background: #16161a; color: #88888c; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
-        .delete-btn { background: #221212; color: #ff5555; border: 1px solid #442222; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .delete-btn { background: #221212; color: #ff5555; border: 1px solid #442222; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
         .delete-btn:hover { background: #441111; color: #ffffff; }
 
         /* 하단 로그 시스템 */
@@ -85,9 +105,10 @@
 
     <div id="admin-gate" class="gate-container">
         <h2>Studio AI CORE</h2>
-        <p>SECURE SYSTEM MANAGEMENT GATEWAY</p>
-        <input type="password" id="admin-gate-pass" placeholder="ENTER MASTER PASSWORD">
-        <button onclick="checkGateKey()">DECRYPT & ACCESS</button>
+        <p>SECURE IDENTITY ACCESS MANAGEMENT</p>
+        <input type="email" id="admin-email" placeholder="ADMINISTRATOR EMAIL" autocomplete="username">
+        <input type="password" id="admin-gate-pass" placeholder="USER ACCESS PASSWORD" autocomplete="current-password">
+        <button onclick="handleAdminLogin()">VERIFY & DECRYPT</button>
     </div>
 
     <div id="admin-main" class="admin-box">
@@ -97,15 +118,42 @@
                 <p>Cloud Firestore Infrastructure Real-time Data Analytics</p>
             </div>
             <div class="server-status">
-                <div class="status-dot"></div>
-                <span>DATABASE LIVE CONNECTED</span>
+                <button class="logout-btn" onclick="handleAdminLogout()">TERMINATE SESSION</button>
+                <div class="status-badge">
+                    <div class="status-dot"></div>
+                    <span>DATABASE LIVE CONNECTED</span>
+                </div>
             </div>
         </div>
 
         <div class="core-analytics">
-            <div class="core-info">
-                <h3>Total Recieved Applications</h3>
-                <div id="count-total" class="total-num">00</div>
+            <div class="analytics-card">
+                <div class="core-info">
+                    <h3>Total Received Applications</h3>
+                    <div id="count-apps" class="total-num">00</div>
+                </div>
+                <div style="text-align: right; color: #444446; font-size: 12px; font-family: monospace;">COLLECTION:<br>applications</div>
+            </div>
+            <div class="analytics-card">
+                <div class="core-info">
+                    <h3>Active Forum Threads</h3>
+                    <div id="count-posts" class="total-num">00</div>
+                </div>
+                <div style="text-align: right; color: #444446; font-size: 12px; font-family: monospace;">CURRENT TARGET:<br><span id="target-collection-badge" style="color:#00e676;">posts_free</span></div>
+            </div>
+            <div class="analytics-card">
+                <div class="core-info">
+                    <h3>Portfolio Count</h3>
+                    <div id="count-portfolio" class="total-num">00</div>
+                </div>
+                <div style="text-align: right; color: #444446; font-size: 12px; font-family: monospace;">COLLECTION:<br><span id="portfolio-collection-title">posts_portfolio2</span></div>
+            </div>
+            <div class="analytics-card">
+                <div class="core-info">
+                    <h3>Total Server Nodes Checked</h3>
+                    <div class="total-num" style="color:#ffffff; font-size:28px; font-weight:800; margin-top:5px;">4 COLLS</div>
+                </div>
+                <div style="text-align: right; color: #444446; font-size: 11px; font-family: monospace;">free/notice/qna/port</div>
             </div>
         </div>
 
@@ -126,7 +174,34 @@
                     </tr>
                 </thead>
                 <tbody id="applicant-list">
-                    <tr><td colspan="9" style="text-align: center; color: #555;">데이터 로딩 대기 중...</td></tr>
+                    <tr><td colspan="9" style="text-align: center; color: #555;">데이터 인프라 분석 대기 중...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="data-section">
+            <div class="section-title"><span>📝 게시판 글로벌 클러스터 관리 피드</span></div>
+            
+            <div class="board-tab-container">
+                <button id="tab-free" class="board-tab active" onclick="switchBoard('posts_free')">자유게시판 (posts_free)</button>
+                <button id="tab-notice" class="board-tab" onclick="switchBoard('posts_notice')">📢 공지사항 (posts_notice)</button>
+                <button id="tab-qna" class="board-tab" onclick="switchBoard('posts_qna')">❓ Q&A 문의 (posts_qna)</button>
+                <button id="tab-portfolio" class="board-tab" onclick="switchBoard('posts_portfolio2')">🎨 포트폴리오 (<span id="tab-portfolio-text">posts_portfolio2</span>)</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 120px;">작성자</th>
+                        <th style="width: 250px;">제목</th>
+                        <th>본문 내용</th>
+                        <th style="width: 150px;">비밀번호 (해시)</th>
+                        <th style="width: 150px;">작성 일시</th>
+                        <th style="width: 60px;">관리</th>
+                    </tr>
+                </thead>
+                <tbody id="board-list">
+                    <tr><td colspan="6" style="text-align: center; color: #555;">데이터 인프라 분석 대기 중...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -145,17 +220,18 @@
 
             <div class="sys-info-box">
                 <div class="sys-info-title">INFRASTRUCTURE</div>
-                <div class="sys-row"><span>Engine</span><span>Firestore DB</span></div>
-                <div class="sys-row"><span>Target Collection</span><span>applications</span></div>
-                <div class="sys-row"><span>SDK Version</span><span>Firebase v10.8.0</span></div>
-                <div class="sys-row"><span>Status</span><span style="color:#00e676;">OPERATIONAL</span></div>
+                <div class="sys-row"><span>Auth Service</span><span>Firebase Auth</span></div>
+                <div class="sys-row"><span>Target Schema</span><span>applications / boards</span></div>
+                <div class="sys-row"><span>SDK Core</span><span>Firebase v10.8.0</span></div>
+                <div class="sys-row"><span>Access Layer</span><span style="color:#00e676;" id="sys-access-layer">RESTRICTED</span></div>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, doc, getDoc, getDocs, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCq19TCAGIDWDRFg5uqfFafJ6aMFC1AM8g",
@@ -166,41 +242,124 @@
             appId: "1:995727815375:web:c07d2adc92cdb22bbf3dba"
         };
 
-        const db = getFirestore(initializeApp(firebaseConfig));
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
 
-        window.checkGateKey = async function() {
+        const MASTER_ADMIN_EMAIL = "gowns4242@gmail.com";
+        
+        // 💡 [동기화 마스터 변수] 포트폴리오 글이 저장되어 있는 실제 컬렉션 이름을 적어주세요.
+        // 만약 안 나온다면 이 명칭을 "posts_free" 나 "portfolio" 등으로 변경해 주시면 됩니다.
+        const ACTUAL_PORTFOLIO_COLLECTION = "posts_portfolio2"; 
+
+        // 현재 선택된 게시판 컬렉션 상태 전역 변수
+        let currentActiveBoard = "posts_free";
+
+        // UI에 동적 컬렉션 명 매핑 반영
+        document.getElementById('portfolio-collection-title').innerText = ACTUAL_PORTFOLIO_COLLECTION;
+        document.getElementById('tab-portfolio-text').innerText = ACTUAL_PORTFOLIO_COLLECTION;
+
+        // 1. Firebase Authentication 로그인 핸들러
+        window.handleAdminLogin = async function() {
+            const emailInput = document.getElementById('admin-email').value.trim();
             const passInput = document.getElementById('admin-gate-pass').value.trim();
-            if(!passInput) return;
+            
+            if(!emailInput || !passInput) {
+                alert("이메일과 비밀번호를 모두 입력해 주세요.");
+                return;
+            }
+
             try {
-                const adminSnap = await getDoc(doc(db, "system_config", "admin_credential"));
-                if (adminSnap.exists() && passInput === adminSnap.data().masterPassword) {
-                    document.getElementById('admin-gate').style.display = 'none';
-                    document.getElementById('admin-main').style.display = 'block';
-                    writeLog("[SUCCESS] Master password verified successfully.");
-                    loadApplicants();
-                } else {
-                    alert('ACCESS DENIED');
-                }
-            } catch (e) { alert('CRITICAL ERROR'); }
+                writeLog(`[AUTH] Attempting cryptographic handshake for: ${emailInput}`);
+                await signInWithEmailAndPassword(auth, emailInput, passInput);
+            } catch (e) {
+                console.error(e);
+                alert('인증 거부: 허가되지 않은 계정이거나 비밀번호가 틀립니다.');
+                writeLog("[WARNING] Access denied. Token encryption handshake failed.");
+            }
         }
 
+        // 2. Firebase Authentication 로그아웃 핸들러
+        window.handleAdminLogout = async function() {
+            if(!confirm("세션을 종료하고 로그아웃 하시겠습니까?")) return;
+            await signOut(auth);
+        }
+
+        // 3. 글로벌 세션 상태 실시간 리스너
+        onAuthStateChanged(auth, (user) => {
+            if (user && user.email === MASTER_ADMIN_EMAIL) {
+                document.getElementById('admin-gate').style.display = 'none';
+                document.getElementById('admin-main').style.display = 'block';
+                document.getElementById('sys-access-layer').innerText = "GRANTED (ADMIN)";
+                document.getElementById('sys-access-layer').style.color = "#00e676";
+                
+                writeLog(`[SUCCESS] Session verified. Token assigned to UID: ${user.uid}`);
+                writeLog("[SYSTEM] Mapping pipeline from cloud databases...");
+                
+                // 마스터 로드 가동
+                loadApplicants();
+                updatePortfolioMetricCount(); // 포트폴리오 별도 상시 메트릭 로드
+                loadBoardPosts(currentActiveBoard);
+            } else {
+                document.getElementById('admin-gate').style.display = 'block';
+                document.getElementById('admin-main').style.display = 'none';
+                document.getElementById('sys-access-layer').innerText = "RESTRICTED";
+                document.getElementById('sys-access-layer').style.color = "#ff5555";
+                writeLog("[SECURITY] Session terminated. Standing by for master credentials...");
+            }
+        });
+
+        // 4. 로깅 터미널 출력 함수
         function writeLog(text) {
             const logBox = document.getElementById('log-box');
+            if (!logBox) return;
             const now = new Date();
-            logBox.innerHTML += `[${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}] ${text}<br>`;
+            const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+            logBox.innerHTML += `[${timeStr}] ${text}<br>`;
             logBox.scrollTop = logBox.scrollHeight;
         }
 
+        // 5. 동적 탭 스위처 엔진 함수 연동
+        window.switchBoard = function(targetCollection) {
+            currentActiveBoard = targetCollection;
+            
+            // UI 활성화 상태 전환 리셋
+            document.querySelectorAll('.board-tab').forEach(btn => btn.classList.remove('active'));
+            if (targetCollection === 'posts_free') document.getElementById('tab-free').classList.add('active');
+            if (targetCollection === 'posts_notice') document.getElementById('tab-notice').classList.add('active');
+            if (targetCollection === 'posts_qna') document.getElementById('tab-qna').classList.add('active');
+            if (targetCollection === 'posts_portfolio') document.getElementById('tab-portfolio').classList.add('active');
+            
+            // 메트릭 배지 업데이트
+            document.getElementById('target-collection-badge').innerText = (targetCollection === 'posts_portfolio2') ? ACTUAL_PORTFOLIO_COLLECTION : targetCollection;
+            
+            writeLog(`[SWITCH] Switching data target schema to: ${targetCollection}`);
+            // 신규 타겟 파이프라인 새로고침 가동
+            loadBoardPosts(targetCollection);
+        }
+
+        // 6. [신청서 명단] 추출 파이프라인
         async function loadApplicants() {
             const tbody = document.getElementById('applicant-list');
             try {
-                // [수정 완료] 경로를 'applications'로 변경했습니다.
-                const q = query(collection(db, "applications"), orderBy("timestamp", "desc"));
+                const q = collection(db, "applications");
                 const querySnapshot = await getDocs(q);
                 tbody.innerHTML = "";
                 let count = 0;
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
+                
+                let docList = [];
+                querySnapshot.forEach(docSnap => {
+                    docList.push({ id: docSnap.id, data: docSnap.data() });
+                });
+                
+                docList.sort((a, b) => {
+                    const dateA = a.data.timestamp?.seconds || new Date(a.data.date).getTime() || 0;
+                    const dateB = b.data.timestamp?.seconds || new Date(b.data.date).getTime() || 0;
+                    return dateB - dateA;
+                });
+
+                docList.forEach((item) => {
+                    const data = item.data;
                     count++;
                     const row = document.createElement('tr');
                     row.innerHTML = `
@@ -218,22 +377,131 @@
                             <strong style="color:#fff; display:inline-block; margin-top:5px;">[소개]</strong> ${data.intro || '-'}
                         </td>
                         <td style="font-size:12px; color:#666;">${data.date || '-'}</td>
-                        <td><button class="delete-btn" onclick="deleteApplicant('${docSnap.id}', '${data.author}')">삭제</button></td>
+                        <td><button class="delete-btn" onclick="deleteDocument('applications', '${item.id}', '${data.author || '미기재'}')">삭제</button></td>
                     `;
                     tbody.appendChild(row);
                 });
-                document.getElementById('count-total').innerText = String(count).padStart(2, '0');
+                
+                document.getElementById('count-apps').innerText = String(count).padStart(2, '0');
+                writeLog(`[SYNC] Loaded ${count} applications successfully.`);
+                
+                if(count === 0) {
+                    tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #555558; padding: 30px 0;">현재 접수된 스터디 신청서가 없습니다.</td></tr>`;
+                }
             } catch (e) { 
                 console.error(e);
-                tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #ff5555;">데이터 로드 실패</td></tr>`;
+                writeLog("[ERROR] Applications stream blocked by security layer.");
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #ff5555;">신청 데이터 로드 패킷 손실</td></tr>`;
             }
         }
 
-        window.deleteApplicant = async function(id, name) {
-            if(!confirm(`정말로 삭제하시겠습니까?`)) return;
-            // [수정 완료] 삭제 경로도 'applications'로 통일
-            await deleteDoc(doc(db, "applications", id));
-            loadApplicants();
+        // 6-2. 대시보드 상단 포트폴리오 상시 전용 카운터 갱신 엔진
+        async function updatePortfolioMetricCount() {
+            try {
+                const q = collection(db, ACTUAL_PORTFOLIO_COLLECTION);
+                const snap = await getDocs(q);
+                document.getElementById('count-portfolio').innerText = String(snap.size).padStart(2, '0');
+            } catch (e) {
+                console.error(e);
+                document.getElementById('count-portfolio').innerText = "ERR";
+            }
+        }
+
+        // 7. [멀티 게시판 연동] 동적 추출 파이프라인
+        async function loadBoardPosts(targetCollection) {
+            const tbody = document.getElementById('board-list');
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #888;">클라우드 데이터 레이어 쿼리 중...</td></tr>`;
+            
+            // 포트폴리오 탭 선택 시 가변 변수로 치환 처리
+            const finalCollection = (targetCollection === "posts_portfolio2") ? ACTUAL_PORTFOLIO_COLLECTION : targetCollection;
+
+            try {
+                const q = collection(db, finalCollection);
+                const querySnapshot = await getDocs(q);
+                tbody.innerHTML = "";
+                let count = 0;
+                
+                let docList = [];
+                querySnapshot.forEach(docSnap => {
+                    docList.push({ id: docSnap.id, data: docSnap.data() });
+                });
+
+                // 누락 필드 우회형 시간 안전 정렬(Safe-Sort)
+                // 💡 숫자형 타임스탬프(Date.now)와 객체형 타임스탬프 모두를 완벽 호환하는 정렬 로직
+                docList.sort((a, b) => {
+                    // 1순위: 파이어베이스 내장 객체(seconds)인 경우 밀리초 변환, 2순위: Date.now() 숫자인 경우 그대로 사용, 3순위: 텍스트 날짜 변환
+                    const dateA = (a.data.timestamp?.seconds ? a.data.timestamp.seconds * 1000 : null) || a.data.timestamp || new Date(a.data.date).getTime() || 0;
+                    const dateB = (b.data.timestamp?.seconds ? b.data.timestamp.seconds * 1000 : null) || b.data.timestamp || new Date(b.data.date).getTime() || 0;
+                    return dateB - dateA;
+                });
+                
+                docList.forEach((item) => {
+                    const data = item.data;
+                    count++;
+                    const row = document.createElement('tr');
+                    
+                    const titleText = data.title || '제목 없음';
+                    const contentText = data.content ? data.content.replace(/\n/g, '<br>') : '-';
+                    
+                    row.innerHTML = `
+                        <td style="font-weight:700; color:#fff;">${data.author || '익명'}</td>
+                        <td style="color:#00e676; font-weight:600;">${titleText}</td>
+                        <td style="font-size:13px; max-width:400px; white-space:pre-wrap; word-break:break-all;">${contentText}</td>
+                        <td style="font-family:monospace; font-size:11px; color:#444446;">${data.password || 'N/A'}</td>
+                        <td style="font-size:12px; color:#666;">${data.date || '-'}</td>
+                        <td><button class="delete-btn" onclick="deleteDocument('${finalCollection}', '${item.id}', '${titleText}')">삭제</button></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                // 메트릭 개수 동기화
+                if(targetCollection === "posts_portfolio2") {
+                    document.getElementById('count-portfolio').innerText = String(count).padStart(2, '0');
+                } else {
+                    document.getElementById('count-posts').innerText = String(count).padStart(2, '0');
+                }
+                
+                writeLog(`[SYNC] Loaded ${count} feeds from target schema: [${finalCollection}]`);
+                
+                if(count === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #555558; padding: 30px 0;">이 게시판에는 현재 등록된 게시물이 없습니다.</td></tr>`;
+                }
+            } catch (e) {
+                console.error(e);
+                writeLog(`[ERROR] Data fetch failed on schema: ${finalCollection}`);
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ff5555;">게시판 데이터 로드 패킷 손실</td></tr>`;
+            }
+        }
+
+        // 8. 통합 삭제 관리 시스템 (동적 스키마 추적 기능 포함)
+        window.deleteDocument = async function(collectionName, id, displayTitle) {
+            let targetLabel = "게시글";
+            if(collectionName === "applications") targetLabel = "신청서";
+            if(collectionName === "posts_notice") targetLabel = "공지사항";
+            if(collectionName === "posts_qna") targetLabel = "Q&A문의";
+            if(collectionName === ACTUAL_PORTFOLIO_COLLECTION) targetLabel = "포트폴리오";
+
+            if(!confirm(`⚠️ 보안 경고: [${targetLabel}] - "${displayTitle}" 데이터를 완전 파기합니까?`)) return;
+            
+            try {
+                writeLog(`[PURGE] Requesting document deletion inside target schema '${collectionName}'`);
+                await deleteDoc(doc(db, collectionName, id));
+                writeLog(`[COMPLETE] Object (${id}) securely purged from Firestore cluster.`);
+                
+                // 상시 카운트 갱신
+                updatePortfolioMetricCount();
+                
+                // 데이터 완전 삭제 후 현재 머물러 있는 화면 스키마 새로고침 처리
+                if(collectionName === "applications") {
+                    loadApplicants();
+                } else {
+                    loadBoardPosts(currentActiveBoard);
+                }
+            } catch(e) {
+                console.error(e);
+                alert("작업 실패: 보안 규칙에 의해 거절되었습니다. 마스터 인증을 확인하십시오.");
+                writeLog(`[DENIED] Critical error executing deletion request on object ID: ${id}`);
+            }
         }
     </script>
 </body>
