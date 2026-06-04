@@ -140,6 +140,7 @@
         /* -------------------------------------------------- */
         /* 메인 비주얼 섹션 (1번 블랙 섹션) */
         /* -------------------------------------------------- */
+        /* 메인 비주얼 섹션 (1번 블랙 섹션) */
         .hero {
             height: 100vh;
             display: flex;
@@ -147,7 +148,11 @@
             justify-content: center;
             align-items: flex-start;
             padding: 0 10%;
-            background: linear-gradient(135deg, #0f0f11 0%, #000000 100%);
+            /* 배경 이미지와 어두운 오버레이 추가 */
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('mainai.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
         .hero .sub-title { font-size: 14px; text-transform: uppercase; letter-spacing: 3px; color: #00e676; margin-bottom: 20px; font-weight: 600; }
         
