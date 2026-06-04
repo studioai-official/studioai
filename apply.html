@@ -31,13 +31,11 @@
         .option-group { display: flex; flex-direction: column; gap: 12px; margin-top: 5px; }
         .option-label { display: flex; align-items: center; gap: 12px; color: #cccccc; font-size: 15px; }
         .option-label input { accent-color: #00e676; width: 18px; height: 18px; }
-        .form-footer-notice { font-size: 13px; color: #666666; text-align: center; margin-top: 40px; }
         .submit-btn { width: 100%; padding: 16px; background-color: #00e676; color: #000000; border: none; border-radius: 30px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.4s; }
         .submit-btn:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0, 230, 118, 0.3); }
 
         @media screen and (max-width: 768px) {
             .custom-cursor { display: none !important; }
-            .admin-btn { display: none !important; } /* 모바일에서 점 3개 숨김 */
             header { padding: 15px 20px; }
             .apply-container { margin-top: 100px; }
         }
@@ -48,9 +46,7 @@
 
     <header>
         <a href="index.html" class="logo hover-target">Studio AI<span>.</span></a>
-        <div style="display: flex; align-items: center;">
-            <a href="index.html" class="back-btn hover-target">← 메인으로 돌아가기</a>
-        </div>
+        <a href="index.html" class="back-btn hover-target">← 메인으로 돌아가기</a>
     </header>
 
     <div class="apply-container">
@@ -62,24 +58,25 @@
 
             <form id="studyForm">
                 <div class="form-section-title">📌 기본 정보</div>
-                <div class="form-group"><label for="userName">이름<span>*</span></label><input type="text" id="userName" class="form-control hover-target" required></div>
-                <div class="form-group"><label for="userContact">연락처<span>*</span></label><input type="tel" id="userContact" class="form-control hover-target" required></div>
-                <div class="form-group"><label for="userAge">나이</label><input type="number" id="userAge" class="form-control hover-target"></div>
-                <div class="form-group"><label for="userJob">전공(직업)</label><input type="text" id="userJob" class="form-control hover-target"></div>
+                <div class="form-group"><label for="userName">이름<span>*</span></label><input type="text" id="userName" class="form-control hover-target" placeholder="예: 홍길동" required></div>
+                <div class="form-group"><label for="userContact">연락처<span>*</span></label><input type="tel" id="userContact" class="form-control hover-target" placeholder="예: 010-1234-5678" required></div>
+                <div class="form-group"><label for="userAge">나이</label><input type="number" id="userAge" class="form-control hover-target" placeholder="예: 25"></div>
+                <div class="form-group"><label for="userJob">전공(직업)</label><input type="text" id="userJob" class="form-control hover-target" placeholder="예: 컴퓨터공학 / 직장인"></div>
 
-                <div class="form-section-title">📌 참여 가능 시간</div>
-                <div class="form-group"><label for="availableTime">가능한 요일/시간대를 자유롭게 적어주세요<span>*</span></label><textarea id="availableTime" class="form-control hover-target" rows="3" required></textarea></div>
+                <div class="form-section-title">📌 상세 내용</div>
+                <div class="form-group"><label for="availableTime">참여 가능 시간<span>*</span></label><input type="text" id="availableTime" class="form-control hover-target" placeholder="예: 평일 저녁 7시 이후, 주말 오전" required></div>
+                <div class="form-group"><label for="userInterests">관심 분야</label><input type="text" id="userInterests" class="form-control hover-target" placeholder="예: AI 챗봇 만들기, 웹 서비스 배포"></div>
+                <div class="form-group"><label for="userIntro">자기소개</label><textarea id="userIntro" class="form-control hover-target" rows="3" placeholder="예: 간단한 자기소개와 개발에 관심을 가지게 된 계기를 적어주세요."></textarea></div>
+                <div class="form-group"><label for="userPurpose">지원 동기(목적)</label><textarea id="userPurpose" class="form-control hover-target" rows="3" placeholder="예: 이번 스터디를 통해 나만의 웹 사이트를 꼭 완성해보고 싶습니다!"></textarea></div>
 
-                <div class="form-section-title">📌 경험 수준</div>
-                <div class="form-group"><label>현재 AI 또는 웹개발 경험이 어느 정도 있으신가요?<span>*</span></label>
-                    <div class="option-group">
-                        <label class="option-label hover-target"><input type="radio" name="expLevel" value="완전 초보" required> 완전 초보</label>
-                        <label class="option-label hover-target"><input type="radio" name="expLevel" value="노코드 사용 경험 있음"> 노코드 사용 경험 있음</label>
-                        <label class="option-label hover-target"><input type="radio" name="expLevel" value="웹개발 경험 있음"> 웹개발 경험 있음</label>
-                    </div>
+                <div class="form-section-title">📌 경험 수준<span>*</span></div>
+                <div class="option-group">
+                    <label class="option-label hover-target"><input type="radio" name="expLevel" value="완전 초보" required> 완전 초보</label>
+                    <label class="option-label hover-target"><input type="radio" name="expLevel" value="노코드 사용 경험 있음"> 노코드 사용 경험 있음</label>
+                    <label class="option-label hover-target"><input type="radio" name="expLevel" value="웹개발 경험 있음"> 웹개발 경험 있음</label>
                 </div>
 
-                <button type="submit" class="submit-btn hover-target">스터디 신청서 제출하기 ⚡</button>
+                <button type="submit" class="submit-btn hover-target" style="margin-top: 40px;">스터디 신청서 제출하기 ⚡</button>
             </form>
         </div>
     </div>
@@ -107,9 +104,30 @@
 
         document.getElementById('studyForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            // 데이터 수집 및 제출 로직 동일
-            alert("신청이 완료되었습니다!");
-            window.location.href = "index.html";
+
+            try {
+                // DB 필드명에 맞게 매핑
+                const data = {
+                    author: document.getElementById('userName').value,
+                    contact: document.getElementById('userContact').value,
+                    age: document.getElementById('userAge').value,
+                    job: document.getElementById('userJob').value,
+                    availableTime: document.getElementById('availableTime').value,
+                    interests: document.getElementById('userInterests').value,
+                    intro: document.getElementById('userIntro').value,
+                    purpose: document.getElementById('userPurpose').value,
+                    expLevel: document.querySelector('input[name="expLevel"]:checked').value,
+                    date: new Date().toLocaleString(),
+                    timestamp: Date.now()
+                };
+
+                await addDoc(collection(db, "applications"), data);
+                alert("신청이 완료되었습니다!");
+                window.location.href = "index.html";
+            } catch (error) {
+                console.error("데이터 저장 실패:", error);
+                alert("저장에 실패했습니다. 다시 시도해주세요.");
+            }
         });
     </script>
 </body>
