@@ -3,12 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Studio AI - Portfolio Showcase</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Studio AI - 사진, 동영상 게시판 Portfolio Showcase</title>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Pretendard', -apple-system, system-ui, sans-serif;
+            background-color: #000000; color: #ffffff; line-height: 1.6; padding-top: 120px;
+        }
+        header {
+            position: fixed; top: 0; left: 0; width: 100%;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 25px 50px; background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px); z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .logo { font-size: 24px; font-weight: 800; color: #ffffff; text-decoration: none; }
+        .logo span { color: #00e676; }
+        .nav-links { display: flex; gap: 20px; align-items: center; }
+        .back-btn { color: #aaaaaa; text-decoration: none; font-size: 15px; transition: color 0.3s; }
+        .back-btn:hover { color: #00e676; }
+        
+        /* 관리자 버튼 스타일 */
+        .admin-btn { 
+            color: #222222; margin-left: 20px; padding: 5px 10px; cursor: pointer; 
+            font-size: 18px; user-select: none; transition: color 0.3s; 
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
         .board-header { margin-bottom: 40px; text-align: center; }
         .board-header h1 { font-size: 2.8rem; font-weight: 700; margin-bottom: 10px; color: #00e676; }
         .board-header p { color: #666666; font-size: 16px; }
+
+        .write-box { background-color: #0a0a0c; border: 1px solid #1a1a1c; padding: 30px; border-radius: 16px; margin-bottom: 50px; }
+        .input-row { display: flex; gap: 15px; margin-bottom: 20px; }
+        .input-row .form-group { flex: 1; margin-bottom: 0; }
+        .form-group input, .write-box textarea { width: 100%; background-color: #121214; border: 1px solid #222225; padding: 16px; border-radius: 10px; color: #ffffff; font-size: 15px; outline: none; transition: all 0.3s; }
+        .form-group input:focus, .write-box textarea:focus { border-color: #00e676; box-shadow: 0 0 10px rgba(0, 230, 118, 0.1); }
+        .write-box textarea { height: 100px; resize: none; }
+        
+        .submit-row { text-align: right; margin-top: 20px; }
+        .submit-btn { background-color: #00e676; color: #000000; border: none; padding: 14px 40px; border-radius: 30px; font-weight: 600; font-size: 15px; cursor: pointer; transition: all 0.2s; }
+        .submit-btn:hover { transform: translateY(-2px); background-color: #ffffff; }
+
         .feed-list { display: flex; flex-direction: column; gap: 35px; }
         .feed-item { background-color: #0a0a0c; border: 1px solid #1a1a1c; padding: 30px; border-radius: 20px; }
         .feed-meta { display: flex; justify-content: space-between; margin-bottom: 15px; color: #444444; font-size: 14px; }
@@ -21,14 +57,27 @@
         .delete-btn { background: none; border: none; color: #444444; cursor: pointer; font-size: 13px; margin-left: 15px; }
         .delete-btn:hover { color: #ff5252; }
         .no-data { text-align: center; color: #444444; padding: 60px 0; }
+
+        @media screen and (max-width: 768px) {
+            body { padding-top: 90px; } 
+            header { padding: 15px 20px; }
+            .board-header h1 { font-size: 2rem; }
+            .input-row { flex-direction: column; gap: 15px; }
+            .write-box, .feed-item { padding: 20px; }
+            .admin-btn { display: none !important; } /* 모바일에서 관리자 버튼 숨김 */
+        }
     </style>
 </head>
 <body>
+
     <header>
         <a href="index.html" class="logo">Studio AI<span>.</span></a>
         <div class="nav-links">
             <a href="index.html" class="back-btn">◀ 메인으로</a>
-            <span onclick="location.href='psychologyadmin.html'" class="admin-btn" onmouseover="this.style.color='#00e676'" onmouseout="this.style.color='#222222'">⋮</span>
+            <span onclick="location.href='psychologyadmin.html'" 
+                  class="admin-btn"
+                  onmouseover="this.style.color='#00e676'" 
+                  onmouseout="this.style.color='#222222'">⋮</span>
         </div>
     </header>
 
@@ -46,7 +95,7 @@
             <div class="form-group" style="margin-bottom: 15px;"><input type="text" id="image-url-input" placeholder="이미지 주소(URL)를 입력하세요 (선택)"></div>
             <div class="form-group" style="margin-bottom: 20px;"><input type="text" id="youtube-url-input" placeholder="유튜브 영상 주소(URL)를 입력하세요 (선택)"></div>
             <div class="form-group"><textarea id="content-input" placeholder="작품에 대한 설명이나 기획 의도를 기록해 주세요..." maxlength="300"></textarea></div>
-            <div class="submit-row" style="text-align: right; margin-top: 20px;"><button class="submit-btn" onclick="addPortfolio()">UPLOAD WORK</button></div>
+            <div class="submit-row"><button class="submit-btn" onclick="addPortfolio()">UPLOAD WORK</button></div>
         </div>
 
         <div id="feed-container" class="feed-list"></div>
@@ -64,6 +113,7 @@
             messagingSenderId: "995727815375",
             appId: "1:995727815375:web:c07d2adc92cdb22bbf3dba"
         };
+
         const db = getFirestore(initializeApp(firebaseConfig));
         const collectionName = "posts_portfolio2"; 
         const feedContainer = document.getElementById('feed-container');
@@ -108,6 +158,7 @@
             const youtubeUrl = document.getElementById('youtube-url-input').value.trim();
             if (!author || !password || !content) { alert('작성자, 비밀번호, 내용을 입력해 주세요.'); return; }
             if (!imageUrl && !youtubeUrl) { alert('이미지 또는 유튜브 주소 중 하나는 필수입니다.'); return; }
+
             const now = new Date();
             await addDoc(collection(db, collectionName), {
                 author, password, content, imageUrl, youtubeUrl,
@@ -115,7 +166,6 @@
                 timestamp: Date.now()
             });
             alert('업로드 완료!');
-            document.getElementById('content-input').value = '';
         }
 
         async function deletePost(id) {

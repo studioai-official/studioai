@@ -6,7 +6,6 @@
     <title>Studio AI - Community</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* 페이지별 전용 스타일 */
         .board-header { text-align: center; margin-bottom: 40px; }
         .board-header h1 { font-size: 2.5rem; font-weight: 700; color: #fff; margin-bottom: 10px; }
         
@@ -16,15 +15,17 @@
         .tab-btn.active { background: #00e676; border-color: #00e676; color: #000; }
         .test-btn { background: #00e676; color: #000; border: none; font-weight: 700; }
 
-        /* 입력 폼 간격 조절 */
-        .write-box { display: flex; flex-direction: column; gap: 15px; } /* 각 줄 사이 15px 간격 */
+        .write-box { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
         .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .form-group { width: 100%; }
-        textarea { height: 120px; resize: none; width: 100%; }
+        textarea { height: 120px; resize: none; width: 100%; box-sizing: border-box; }
 
         .feed-item { background: #0a0a0c; border: 1px solid #1a1a1c; padding: 20px; border-radius: 16px; margin-bottom: 15px; }
-        .feed-meta { display: flex; justify-content: space-between; font-size: 13px; color: #666; margin-bottom: 10px; }
-        .feed-content { color: #ddd; white-space: pre-line; }
+        .feed-meta { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #666; margin-bottom: 10px; }
+        .meta-right { display: flex; align-items: center; gap: 10px; }
+        .feed-content { color: #ddd; white-space: pre-line; line-height: 1.6; }
+        
+        .delete-btn { background: none; border: none; color: #444; cursor: pointer; font-size: 12px; }
+        .delete-btn:hover { color: #ff5252; }
     </style>
 </head>
 <body>
@@ -53,9 +54,7 @@
                 <input type="text" id="author-input" placeholder="닉네임" maxlength="10">
                 <input type="password" id="password-input" placeholder="비밀번호(4자)" maxlength="12">
             </div>
-            <div class="form-group">
-                <textarea id="content-input" placeholder="내용을 남겨주세요..." maxlength="300"></textarea>
-            </div>
+            <textarea id="content-input" placeholder="내용을 남겨주세요..." maxlength="300"></textarea>
             <button class="submit-btn" onclick="addPost()">POSTING</button>
         </div>
 
@@ -64,7 +63,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, doc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCq19TCAGIDWDRFg5uqfFafJ6aMFC1AM8g",
@@ -79,6 +78,11 @@
         let currentCollectionName = "posts_free";
         let unsubscribe = null;
 
+        async function getMasterPassword() {
+            const docSnap = await getDoc(doc(db, "system_config", "admin_credential"));
+            return docSnap.exists() ? docSnap.data().masterPassword : null;
+        }
+
         window.switchBoard = (name, btn) => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -88,7 +92,7 @@
 
         function startListening() {
             if (unsubscribe) unsubscribe();
-            unsubscribe = onSnapshot(query(collection(db, currentCollectionName), orderBy("timestamp", "desc")), (snapshot) => {
+            unsubscribe = onSnapshot(query(collection(db, currentCollectionName)), (snapshot) => {
                 const container = document.getElementById('feed-container');
                 container.innerHTML = '';
                 snapshot.forEach(docSnap => {
@@ -97,10 +101,13 @@
                     item.className = 'feed-item';
                     item.innerHTML = `
                         <div class="feed-meta">
-                            <span><b>${p.author}</b> ${p.isAdmin ? '<span style="color:#00e676">ADMIN</span>' : ''}</span>
-                            <span>${p.date}</span>
+                            <span><b>${p.author || '익명'}</b></span>
+                            <div class="meta-right">
+                                <span>${p.date || ''}</span>
+                                <button class="delete-btn" onclick="deletePost('${docSnap.id}')">삭제</button>
+                            </div>
                         </div>
-                        <div class="feed-content">${p.content}</div>
+                        <div class="feed-content">${p.content || ''}</div>
                     `;
                     container.appendChild(item);
                 });
@@ -116,10 +123,29 @@
             const now = new Date();
             await addDoc(collection(db, currentCollectionName), {
                 author, password, content,
-                date: `${now.getMonth()+1}.${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`,
-                timestamp: Date.now()
+                date: `${now.getMonth()+1}.${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`
             });
             document.getElementById('content-input').value = '';
+            document.getElementById('password-input').value = '';
+        }
+
+        window.deletePost = async (id) => {
+            const inputPw = prompt("비밀번호를 입력하세요:");
+            if (!inputPw) return;
+            
+            const masterPw = await getMasterPassword();
+            const docRef = doc(db, currentCollectionName, id);
+            const docSnap = await getDoc(docRef);
+            
+            if (docSnap.exists()) {
+                // 작성자 비밀번호 일치 OR 관리자 마스터 비밀번호 일치 시 삭제
+                if (docSnap.data().password === inputPw || inputPw === masterPw) {
+                    await deleteDoc(docRef);
+                    alert("삭제되었습니다.");
+                } else {
+                    alert("비밀번호가 틀렸습니다.");
+                }
+            }
         }
         
         startListening();
